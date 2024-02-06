@@ -17,7 +17,8 @@ namespace quantas{
 
         int                     roundNumber = -1;
         int                     peerID = -1;
-        vector<int>             content;
+        vector<int>             deltap; // new values recieved in last round
+        string messageType = ""; //heartbeat or consensus
 
     };
 
@@ -29,24 +30,36 @@ namespace quantas{
         UFDPeer                             (const UFDPeer& &rhs);
         ~UFDPeer                            ();
 
-        //= process includes its ID in every message it sends
-        int                                 peer_ID;
+        //= if we crash dont do anything
+        bool                                crashed;
 
         //= vector of vectors of messages that have been received
         vector<vector<UFDPeerMessage>>      allMessages;
 
-        //= vector of messages from this round
-        vector<UFDPeerMessage>              roundMessages;
+        //= vector of messages from phase 2
+        vector<UFDPeerMessage>              lastMessages;
 
-        //= vector of process's local list of values
+        //= vector of process's local list of values (Vp)
         vector<int>                         localList;
+
+        //= deltap - what I heard LAST round, not the whole record which is Vp
+        int deltap;
 
         //= local perfect failure detector
         PerfectFailureDetector*              PFD; 
 
         //= status to indicate phase 1-3
-        int                                 status = 1;
+        int                                 phase = 1;
 
+        //= different from regular messages, we need to send a heartbeat
+        void                  sendHeartbeat()
+
+        //= make our local failure detector receive a heartbeat
+        void                  receiveHeartbeat(UFDPeerMessage){
+            PFD.receiveHeartbeat(UFDPeerMessage)
+        }
+
+        #pragma region carried over from PBFT
         // perform one step of the Algorithm with the messages in inStream
         //void                 performComputation();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
@@ -60,18 +73,11 @@ namespace quantas{
 
         // string indicating the current status of a node
         //string                          status = "pre-prepare";
-        // current squence number
-        //int                             sequenceNum = 0;
-
-        // vector of recieved transactions
-        //vector<UFDPeerMessage>		    transactions;
-        // vector of confirmed transactions
-        //vector<UFDPeerMessage>		    confirmedTrans;
 
         // latency of confirmed transactions
-        int                             latency = 0;
+        //int                             latency = 0;
         // rate at which to submit transactions ie 1 in x chance for all n nodes
-        int                             submitRate = 20;
+        //int                             submitRate = 20;
         
         // the id of the next transaction to submit
         //static int                      currentTransaction;
@@ -83,8 +89,8 @@ namespace quantas{
         // submitTrans creates a transaction and broadcasts it to everyone
         void                  submitTrans(int tranID);
 
-        //= different from regular messages, we need to send a heartbeat
-        //void                  sendHeartbeat()
+        #pragma endregion
+
     };
 
     class PerfectFailureDetector{
@@ -93,42 +99,39 @@ namespace quantas{
 
         // when we want to suspect a process
         void                    suspectProcess(int ID)
-
         // if we get a message after suspected a process, we update our timeTolerance
-        void                    updateTolerance(UFDPeer peer, int roundNum){
-            int newNum;
-
-            //find the currently suspected process
-            auto found = suspectList.find(peer);
-            if(found != suspectList.end()) newNum = timeTolerance;
-
-            
-            else{
-                //find the round number we suspected it at
-                int oldRound = found->second;
-
-                //update the tolerance
-                newNum = roundNum - oldRound;
-            }
-
-            timeTolerance = newNum;
-
+        void                    updateTolerance(int peerID, int roundNum){
+            int oldRound = processList.find(peerID)->second;
+            if(timeTolerance < newNum) //only change the tolerance if it's an increase
+                timeTolerance = roundNum - oldRound;
         }
-
         // if we receive a heartbeat message from a process
-        void                    receiveHeartbeat(UFDPeer peer, int roundNum){
-            //look for it in the suspectList
-            auto found = suspectList.find(peer);
-            //if found, then need to update round number we received a heartbeat most recently.
-            if(found != suspectList.end()){
-                found.second = roundNum;
+        void                    receiveHeartbeat(UFDPeerMessage msg){
+            
+            //look for the process in our suspectList
+            auto found = processList.find(msg.peerID);
+
+            //if somehow we don't have record of this process, insert it
+            if(found == processList.end()) 
+                processList.insert(std::make_pair(msg.peerID, msg.roundNumber));
+
+            //if the process is in the map
+            else{
+                // and if the process is mistakenly suspected
+                if((msg.roundNumber - found->second) > timeTolerance)
+                    updateTolerance(msg.peerID, msg.roundNumber);
+
+                // then (regardless) we update the map value for most recent heartbeat
+                found->second = msg.roundNumber;
             }
+
+
         }
+    
     private:
         // maintain a list of processes, last round we receive heartbeat
-        std::map<UFDPeer, int>   processList;
-
-        // how many rounds before we suspect a process
+        std::map<int, int>   processList;
+        // how many rounds before we suspect a process?
         int                      timeTolerance;
     }
     

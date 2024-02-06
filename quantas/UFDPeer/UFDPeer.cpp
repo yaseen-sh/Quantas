@@ -18,14 +18,15 @@ namespace quantas {
 	}
 
 	void UFDPeer::performComputation() {
-		if (id() == 0 && getRound() == 0) {
-			submitTrans(currentTransaction);
+		if (crashed) {
+			return;
 		}
 		if (true)
 			checkInStrm();
 
 		if (true)
 			checkContents();
+			//insert heartbeat every so often
 
 	}
 
@@ -35,6 +36,10 @@ namespace quantas {
 		LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 	}
 
+
+
+
+	//NEED TO EDIT
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
@@ -50,6 +55,14 @@ namespace quantas {
 			}
 		}
 	}
+
+	void UFDPeer::sendHeartbeat(){
+		UFDPeerMessage msg;
+		msg.messageType = "heartbeat";
+		msg.peerID = id();
+		broadcast(msg);
+	}
+
 	void UFDPeer::checkContents() {
 		if (id() == 0 && status == "pre-prepare") {
 			for (int i = 0; i < transactions.size(); i++) {
@@ -128,16 +141,16 @@ namespace quantas {
 
 	}
 
-	void UFDPeer::submitTrans(int tranID) {
-		UFDPeerMessage message;
-		message.messageType = "trans";
-		message.trans = tranID;
-		message.Id = id();
-		message.roundSubmitted = getRound();
-		broadcast(message);
-		transactions.push_back(message);
-		currentTransaction++;
-	}
+	// void UFDPeer::submitTrans(int tranID) {
+	// 	UFDPeerMessage message;
+	// 	message.messageType = "trans";
+	// 	message.trans = tranID;
+	// 	message.Id = id();
+	// 	message.roundSubmitted = getRound();
+	// 	broadcast(message);
+	// 	transactions.push_back(message);
+	// 	currentTransaction++;
+	// }
 
 	ostream& UFDPeer::printTo(ostream& out)const {
 		Peer<UFDPeerMessage>::printTo(out);
