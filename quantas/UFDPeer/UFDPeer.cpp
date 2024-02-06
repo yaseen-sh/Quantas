@@ -26,7 +26,11 @@ namespace quantas {
 
 		if (true)
 			checkContents();
-			//insert heartbeat every so often
+		
+		if(true){
+			if(getRound() % 6 == 0) //6 is arbitrary, but we don't want to send a heartbeat every round. make it smarter later.
+				sendHeartbeat();
+		}
 
 	}
 
@@ -44,15 +48,33 @@ namespace quantas {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
 			
-			if (newMsg.getMessage().messageType == "trans") {
+/* 			if (newMsg.getMessage().messageType == "trans") {
 				transactions.push_back(newMsg.getMessage());
-			}
+			} */
+
+			//handle receiving a heartbeat
+			if(newMsg.getMessage().messageType == "heartbeat")
+				receiveHeartbeat();
+
+			//else if its a consensus related message
 			else {
+				//if we need to push_back
+				if(allMessages.size() < getRound()){
+					vector<UFDPeerMessage> stuff;
+					stuff.push_back(newMsg.getMessage());
+					allMessages.push_back(stuff);
+				}
+				else{
+					allMessages[getRound()].push_back(newMsg.getMessage());
+				}
+			}
+				
+/* 			else {
 				while (receivedMessages.size() < newMsg.getMessage().sequenceNum + 1) {
 					receivedMessages.push_back(vector<UFDPeerMessage>());
 				}
 				receivedMessages[newMsg.getMessage().sequenceNum].push_back(newMsg.getMessage());
-			}
+			} */
 		}
 	}
 
