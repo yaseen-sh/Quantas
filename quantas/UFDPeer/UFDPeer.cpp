@@ -86,6 +86,55 @@ namespace quantas {
 	}
 
 	void UFDPeer::checkContents() {
+		//phase 1: send message with roundNum, deltaP, ID 
+		if(phase == 1){
+			//set up the message to send deltaP
+			UFDPeerMessage msg;
+			msg.messageType = "consensus";
+			msg.peerID = id();
+			msg.roundNumber = getRound();
+			msg.deltap = deltap;
+
+			//send the message
+			broadcast(msg);
+
+			//add processing stuff & query FD
+		}
+
+		//phase 2: send Vp to all processes
+		else if(phase == 2){
+			//set up message to send Vp
+			UFDPeerMessage msg;
+			msg.messageType = "consensus";
+			msg.peerID = id();
+			msg.roundNumber = getRound();
+			msg.deltap = localList;
+
+			//send the message
+			broadcast(msg);
+
+			//add processing stuff & query FD
+		}
+
+
+		else if (phase == 3){
+			decision = decide();
+		}
+	}
+
+	void decide(){
+		//given the values that we have in Vp now, we select the first non default value
+		//as per Chandra's algorithm (page 16 of UFD Paper)
+
+		int i = 0;
+		while(localList[i] != NULL && i < localList.size()){
+			++i;
+		}
+		return localList[i];
+
+	}
+
+	void UFDPeer::checkContents() {
 		if (id() == 0 && status == "pre-prepare") {
 			for (int i = 0; i < transactions.size(); i++) {
 				bool skip = false;

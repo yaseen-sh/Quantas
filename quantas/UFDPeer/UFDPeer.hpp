@@ -43,13 +43,16 @@ namespace quantas{
         vector<int>                         localList;
 
         //= deltap - what I heard LAST round, not the whole record which is Vp
-        int deltap;
+        int                                 deltap;
 
         //= local perfect failure detector
         PerfectFailureDetector*              PFD; 
 
         //= status to indicate phase 1-3
         int                                 phase = 1;
+
+        //= store the decision value
+        int                                 decision = NULL;
 
         //= different from regular messages, we need to send a heartbeat
         void                  sendHeartbeat()
@@ -58,6 +61,13 @@ namespace quantas{
         void                  receiveHeartbeat(UFDPeerMessage){
             PFD.receiveHeartbeat(UFDPeerMessage)
         }
+
+        //function to make the process crash, gets called however setup
+        void                    crash(){
+            PFD.suspectProcess(id()); //use magic to make the FD perfect!
+
+        }
+        void                    decide();
 
         #pragma region carried over from PBFT
         // perform one step of the Algorithm with the messages in inStream
@@ -69,7 +79,6 @@ namespace quantas{
         void                 log()const { printTo(*_log); };
         ostream&             printTo(ostream&)const;
         friend ostream& operator<<         (ostream&, const UFDPeer&);
-        
 
         // string indicating the current status of a node
         //string                          status = "pre-prepare";
@@ -98,12 +107,21 @@ namespace quantas{
         PerfectFailureDetector(int a) : timeTolerance(a) {}
 
         // when we want to suspect a process
-        void                    suspectProcess(int ID)
+        void                    suspectProcess(int peerID){
+           auto found = processList.find(peerID);
+           //if it's in the list, of course
+           if (found != processList.end()) {
+                found->second->second = true; //set flag to true
+           }
+        }
         // if we get a message after suspected a process, we update our timeTolerance
         void                    updateTolerance(int peerID, int roundNum){
-            int oldRound = processList.find(peerID)->second;
+            int oldRound = processList.find(peerID)->second->first;
             if(timeTolerance < newNum) //only change the tolerance if it's an increase
                 timeTolerance = roundNum - oldRound;
+
+            //also need to change the flag to false because no longer suspected
+            processList.find(peerID)->second->second = false;
         }
         // if we receive a heartbeat message from a process
         void                    receiveHeartbeat(UFDPeerMessage msg){
@@ -113,12 +131,13 @@ namespace quantas{
 
             //if somehow we don't have record of this process, insert it
             if(found == processList.end()) 
-                processList.insert(std::make_pair(msg.peerID, msg.roundNumber));
+                processList.insert(std::make_pair(msg.peerID, std::make_pair(msg.roundNumber, false)));
 
             //if the process is in the map
             else{
                 // and if the process is mistakenly suspected
-                if((msg.roundNumber - found->second) > timeTolerance)
+                if((msg.roundNumber - found->second->first) > timeTolerance
+                    && found->second->second == true)
                     updateTolerance(msg.peerID, msg.roundNumber);
 
                 // then (regardless) we update the map value for most recent heartbeat
@@ -129,8 +148,8 @@ namespace quantas{
         }
     
     private:
-        // maintain a list of processes, last round we receive heartbeat
-        std::map<int, int>   processList;
+        // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
+        std::map<int, pair<int, bool>>   processList;
         // how many rounds before we suspect a process?
         int                      timeTolerance;
     }
