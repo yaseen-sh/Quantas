@@ -31,7 +31,7 @@ namespace quantas{
         ~UFDPeer                            ();
 
         //= if we crash dont do anything
-        bool                                crashed;
+        bool                                crashed = false;
 
         //= vector of vectors of messages that have been received
         vector<vector<UFDPeerMessage>>      allMessages;
@@ -42,31 +42,38 @@ namespace quantas{
         //= vector of process's local list of values (Vp)
         vector<int>                         localList;
 
-        //= deltap - what I heard LAST round, not the whole record which is Vp
-        int                                 deltap;
+        //= 
+        vector<int>                         deltap;
 
         //= local perfect failure detector
-        PerfectFailureDetector*              PFD; 
+        PerfectFailureDetector              PFD; 
 
         //= status to indicate phase 1-3
-        int                                 phase = 1;
+        int                                 phase = 0;
 
+        //= value to propose
+        int                                 proposal = -1;
+        
         //= store the decision value
-        int                                 decision = NULL;
+        int                                 decision = -1;
+
+        //= phase 1 keep track var
+        int                                 iteration = 0;
 
         //= different from regular messages, we need to send a heartbeat
-        void                  sendHeartbeat()
+        void                  sendHeartbeat();
 
         //= make our local failure detector receive a heartbeat
-        void                  receiveHeartbeat(UFDPeerMessage){
-            PFD.receiveHeartbeat(UFDPeerMessage)
+        void                  receiveHeartbeat(UFDPeerMessage msg){
+            PFD.receiveHeartbeat(msg);
         }
 
         //function to make the process crash, gets called however setup
         void                    crash(){
+            crashed = true;
             PFD.suspectProcess(id()); //use magic to make the FD perfect!
-
         }
+
         void                    decide();
 
         #pragma region carried over from PBFT
@@ -146,7 +153,22 @@ namespace quantas{
 
 
         }
-    
+
+        bool                    checkReceived(vector<UFDPeerMessage> vec){
+            for(const auto& a : processList){
+                if(!a.second.second){
+                    bool found = false;
+                    for(int i = 0; i < vec.size(); ++i){
+                        if(vec[i].peerID == a.first){
+                            found = true;
+                            break;
+                        }                        
+                    }
+                    if(!found) return false;
+                }
+            }
+            return true;
+        }
     private:
         // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
         std::map<int, pair<int, bool>>   processList;
