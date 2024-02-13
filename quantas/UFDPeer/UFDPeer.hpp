@@ -68,12 +68,18 @@ namespace quantas{
             PFD.receiveHeartbeat(msg);
         }
 
-        //function to make the process crash, gets called however setup
+        //= function to make the process crash, gets called however setup
         void                    crash(){
             crashed = true;
-            PFD.suspectProcess(id()); //use magic to make the FD perfect!
+            //create a special suspect message to others and broadcast
+            UFDPeerMessage msg;
+            msg.peerID = id();
+            msg.messageType = "suspect";
+            broadcast(msg);
+            PFD.suspectProcess(id()); //suspect itself
         }
 
+        //= select the first non default value as our decision
         void                    decide();
 
         #pragma region carried over from PBFT

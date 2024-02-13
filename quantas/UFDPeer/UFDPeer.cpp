@@ -43,10 +43,16 @@ namespace quantas {
 	void UFDPeer::initParameters(const vector<Peer<UFDPeerMessage>*>& _peers, json parameters) {
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 		for(int i = 0; i < peers.size(); ++i){
+			
+			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
+			peers[i]->localList.resize(peers.size()); 
+			//initialize vectors to bottom (-1)
 			for(int j = 0; j < deltap.size(); ++j){
 				peers[i]->deltap[j] = -1;
+				peers[i]->localList[j] = -1;
 			}
+			//set proposal values and update deltap's
 			peers[i]->proposal = rand() % 2; // 0 or 1
 			peers[i]->deltap[peers[i]->id()] = peers[i]->proposal;
 		}
@@ -66,8 +72,12 @@ namespace quantas {
 			if(newMsg.getMessage().messageType == "heartbeat")
 				receiveHeartbeat(newMsg);
 
+			//we use magic to tell every process to suspect a process when it crashes
+			else if (newMsg.getMessage().messageType == "suspect"){
+				PFD.suspectProcess(newMsg.getMessage().peerID);
+			}
 			//else if its a consensus related message
-			else {
+			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
 				//if we need to push_back
 				if(allMessages.size() < getRound()){
 					vector<UFDPeerMessage> stuff;
@@ -77,6 +87,10 @@ namespace quantas {
 				else{
 					allMessages[getRound()].push_back(newMsg.getMessage());
 				}
+			}
+			//if its phase 2
+			else if (newMsg.getMessage().messageType == "consensus" && phase == 2){
+				lastMessages.push_back(newMsg.getMessage());
 			}
 				
 /* 			else {
@@ -150,13 +164,24 @@ namespace quantas {
 			UFDPeerMessage msg;
 			msg.messageType = "consensus";
 			msg.peerID = id();
-			msg.roundNumber = getRound();
+			msg.roundNumber = ++iteration;
 			msg.deltap = localList;
 
 			//send the message
 			broadcast(msg);
 
-			//add processing stuff & query FD
+			//query the failure detector
+			if(PFD.checkReceived(lastMessages)){
+				//look for default values and set localList to match them
+				for(int i = 0; i < lastMessages.size(); ++i){
+					for(int j = 0; j < deltap.size(); ++j){
+						if(lastMessages[i].deltap[j] == -1){
+							localList[j] = -1;
+						}
+					}
+				}
+			}
+			
 			++phase;
 		}
 
