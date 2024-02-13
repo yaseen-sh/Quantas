@@ -19,11 +19,15 @@ PROJECT_DIR := quantas
 #  configure this for the specific algorithm and input file
 #
 
-INPUTFILE := ExampleInput.json
+# INPUTFILE := ExampleInput.json
+
+INPUTFILE := UFDInput.json
+
+ALGFILE := UFDPeer
 
 # ALGFILE := TrailPeer
 
-ALGFILE := ExamplePeer
+# ALGFILE := ExamplePeer
 
 # ALGFILE := BitcoinPeer
 
