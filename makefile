@@ -118,6 +118,7 @@ rand_test: $(PROJECT_DIR)/Tests/randtest.cpp $(PROJECT_DIR)/Common/Distribution.
 
 TESTS = check-version rand_test test_Example test_Bitcoin test_Ethereum test_PBFT test_Raft test_SmartShards test_LinearChord test_Kademlia test_AltBit test_StableDataLink test_ChangRoberts test_Dynamic test_KPT test_KSM
 
+PFD = check-version rand_test test_PFD
 ############################### Compile and run all tests - uses a wild card.
 test: $(TESTS)
 	@make --no-print-directory clean
@@ -136,6 +137,25 @@ test_%:
 	@$(RM) quantas/$(ALGFILE)/*.o
 	@echo $(ALGFILE) successful
 
+#==========================================
+#UFD - PFD
+test: $(PFD)
+	@make --no-print-directory clean
+	@echo all tests successful
+
+test_%: ALGFILE = $*Peer
+test_%: CXXFLAGS += -O0 -g  -D_GLIBCXX_DEBUG -std=c++17
+test_%:
+	@make --no-print-directory clean
+	@echo Testing $(ALGFILE)
+	@$(CXX) $(CXXFLAGS) -c -o quantas/main.o quantas/main.cpp
+	@$(CXX) $(CXXFLAGS) -c -o quantas/$(ALGFILE)/$(ALGFILE).o quantas/$(ALGFILE)/$(ALGFILE).cpp
+	@$(CXX) $(CXXFLAGS) -c -o quantas/Common/Distribution.o quantas/Common/Distribution.cpp
+	@$(CXX) $(CXXFLAGS)  quantas/main.o quantas/$(ALGFILE)/$(ALGFILE).o quantas/Common/Distribution.o -o $(EXE)
+	@./$(EXE) quantas/$(ALGFILE)/$*Input.json
+	@$(RM) quantas/$(ALGFILE)/*.o
+	@echo $(ALGFILE) successful
+	
 clean:
 	@$(RM) *.exe
 	@$(RM) *.out
