@@ -22,7 +22,7 @@ namespace quantas{
 
     };
 
-     class PerfectFailureDetector{
+    class PerfectFailureDetector{
     public:
         PerfectFailureDetector(int a) : timeTolerance(a) {}
 
@@ -178,7 +178,7 @@ namespace quantas{
         // checkContents loops through the receivedMessages attempting to advance the status of consensus
         void                  checkContents();
         // submitTrans creates a transaction and broadcasts it to everyone
-        void                  submitTrans(int tranID);
+        //void                  submitTrans(int tranID);
 
         #pragma endregion
 
