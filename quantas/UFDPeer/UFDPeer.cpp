@@ -3,7 +3,7 @@
 
 namespace quantas {
 
-	int UFDPeer::currentTransaction = 1;
+	//int UFDPeer::currentTransaction = 1;
 
 	UFDPeer::~UFDPeer() {
 
@@ -109,6 +109,18 @@ namespace quantas {
 		broadcast(msg);
 	}
 
+	void decide(){
+		//given the values that we have in Vp now, we select the first non default value
+		//as per Chandra's algorithm (page 16 of UFD Paper)
+
+		int i = 0;
+		while(localList[i] != -1 && i < localList.size()){
+			++i;
+		}
+		return localList[i];
+
+	}
+
 	void UFDPeer::checkContents() {
 
 		if(phase == 0){
@@ -136,11 +148,12 @@ namespace quantas {
 
 				//update deltap values and Vp
 				for(int k = 0; k = deltap.size(); ++k){
-					if(localList[k] == -1)
-					for (all messages){
-						if(allMessages[i].peerID == k && allMessages[i].deltap[k] != -1){
-							localList[k] = allMessages[i].deltap[k];
-							deltap[k] = allMessages[i].deltap[k];
+					if(localList[k] == -1){
+						for (int i = 0; i < allMessages.size(); ++i){
+							if(allMessages[i].peerID == k && allMessages[i].deltap[k] != -1){
+								localList[k] = allMessages[i].deltap[k];
+								deltap[k] = allMessages[i].deltap[k];
+							}
 						}
 					}
 				}
@@ -154,7 +167,7 @@ namespace quantas {
 				broadcast(msg);
 				//TODO: also message our own vector
 			}
-			if(iteration == deltap().size())
+			if(iteration == deltap.size())
 				++phase;
 		}
 
@@ -190,95 +203,7 @@ namespace quantas {
 		}
 	}
 
-	void decide(){
-		//given the values that we have in Vp now, we select the first non default value
-		//as per Chandra's algorithm (page 16 of UFD Paper)
 
-		int i = 0;
-		while(localList[i] != -1 && i < localList.size()){
-			++i;
-		}
-		return localList[i];
-
-	}
-
-	void UFDPeer::checkContents() {
-		if (id() == 0 && status == "pre-prepare") {
-			for (int i = 0; i < transactions.size(); i++) {
-				bool skip = false;
-				for (int j = 0; j < confirmedTrans.size(); j++) {
-					if (transactions[i].trans == confirmedTrans[j].trans) {
-						skip = true;
-						break;
-					}
-				}
-				if (!skip) {
-					status = "prepare";
-					UFDPeerMessage message = transactions[i];
-					message.messageType = "pre-prepare";
-					message.Id = id();
-					message.sequenceNum = sequenceNum;
-					broadcast(message);
-					if (receivedMessages.size() < sequenceNum + 1) {
-						receivedMessages.push_back(vector<UFDPeerMessage>());
-					}
-					receivedMessages[sequenceNum].push_back(message);
-					break;
-				}
-			}
-		} else if (status == "pre-prepare" && receivedMessages.size() >= sequenceNum + 1) {
-			for (int i = 0; i < receivedMessages[sequenceNum].size(); i++) {
-				UFDPeerMessage message = receivedMessages[sequenceNum][i];
-				if (message.messageType == "pre-prepare") {
-					status = "prepare";
-					UFDPeerMessage newMsg = message;
-					newMsg.messageType = "prepare";
-					newMsg.Id = id();
-					broadcast(newMsg);
-					receivedMessages[sequenceNum].push_back(newMsg);
-				}
-			}
-		}
-
-		if (status == "prepare") {
-			int count = 0;
-			for (int i = 0; i < receivedMessages[sequenceNum].size(); i++) {
-				UFDPeerMessage message = receivedMessages[sequenceNum][i];
-				if (message.messageType == "prepare") {
-					count++;
-				}
-			}
-			if (count > (neighbors().size() * 2 / 3)) {
-				status = "commit";
-				UFDPeerMessage newMsg = receivedMessages[sequenceNum][0];
-				newMsg.messageType = "commit";
-				newMsg.Id = id();
-				broadcast(newMsg);
-				receivedMessages[sequenceNum].push_back(newMsg);
-			}
-		}
-
-		if (status == "commit") {
-			int count = 0;
-			for (int i = 0; i < receivedMessages[sequenceNum].size(); i++) {
-				UFDPeerMessage message = receivedMessages[sequenceNum][i];
-				if (message.messageType == "commit") {
-					count++;
-				}
-			}
-			if (count > (neighbors().size() * 2 / 3)) {
-				status = "pre-prepare";
-				confirmedTrans.push_back(receivedMessages[sequenceNum][0]);
-				latency += getRound() - receivedMessages[sequenceNum][0].roundSubmitted;
-				sequenceNum++;
-				if (id() == 0) {
-					submitTrans(currentTransaction);
-				}
-				checkContents();
-			}
-		}
-
-	}
 
 	// void UFDPeer::submitTrans(int tranID) {
 	// 	UFDPeerMessage message;
