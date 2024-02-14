@@ -155,7 +155,7 @@ test_%:
 	@./$(EXE) quantas/$(ALGFILE)/$*Input.json
 	@$(RM) quantas/$(ALGFILE)/*.o
 	@echo $(ALGFILE) successful
-	
+
 clean:
 	@$(RM) *.exe
 	@$(RM) *.out
