@@ -109,7 +109,7 @@ namespace quantas {
 		broadcast(msg);
 	}
 
-	void decide(){
+	void UFDPeer::decide(){
 		//given the values that we have in Vp now, we select the first non default value
 		//as per Chandra's algorithm (page 16 of UFD Paper)
 
