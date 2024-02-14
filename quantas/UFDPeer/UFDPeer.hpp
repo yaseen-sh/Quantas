@@ -31,12 +31,13 @@ namespace quantas{
            auto found = processList.find(peerID);
            //if it's in the list, of course
            if (found != processList.end()) {
-                found->second->second = true; //set flag to true
+                found->second.second = true; //set flag to true
            }
         }
         // if we get a message after suspected a process, we update our timeTolerance
         void                    updateTolerance(int peerID, int roundNum){
             int oldRound = processList.find(peerID)->second->first;
+            int newNum = roundNum - oldRound; //find the difference between last detection and now
             if(timeTolerance < newNum) //only change the tolerance if it's an increase
                 timeTolerance = roundNum - oldRound;
 
@@ -56,12 +57,13 @@ namespace quantas{
             //if the process is in the map
             else{
                 // and if the process is mistakenly suspected
-                if((msg.roundNumber - found->second->first) > timeTolerance
-                    && found->second->second == true)
+                if((msg.roundNumber - found->second.first) > timeTolerance
+                    && found->second.second == true)
                     updateTolerance(msg.peerID, msg.roundNumber);
 
                 // then (regardless) we update the map value for most recent heartbeat
-                found->second = msg.roundNumber;
+                found->second.first = msg.roundNumber;
+                found->second.second = false; //don't suspect it anymore
             }
 
 
@@ -87,7 +89,7 @@ namespace quantas{
         std::map<int, std::pair<int, bool>>   processList;
         // how many rounds before we suspect a process?
         int                      timeTolerance;
-    }
+    };
 
 
     class UFDPeer : public Peer<UFDPeerMessage>{
