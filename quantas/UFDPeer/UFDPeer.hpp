@@ -36,13 +36,13 @@ namespace quantas{
         }
         // if we get a message after suspected a process, we update our timeTolerance
         void                    updateTolerance(int peerID, int roundNum){
-            int oldRound = processList.find(peerID)->second->first;
+            int oldRound = processList.find(peerID)->second.first;
             int newNum = roundNum - oldRound; //find the difference between last detection and now
             if(timeTolerance < newNum) //only change the tolerance if it's an increase
                 timeTolerance = roundNum - oldRound;
 
             //also need to change the flag to false because no longer suspected
-            processList.find(peerID)->second->second = false;
+            processList.find(peerID)->second.second = false;
         }
         // if we receive a heartbeat message from a process
         void                    receiveHeartbeat(UFDPeerMessage msg){
