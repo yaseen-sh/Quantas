@@ -118,7 +118,7 @@ rand_test: $(PROJECT_DIR)/Tests/randtest.cpp $(PROJECT_DIR)/Common/Distribution.
 
 TESTS = check-version rand_test test_Example test_Bitcoin test_Ethereum test_PBFT test_Raft test_SmartShards test_LinearChord test_Kademlia test_AltBit test_StableDataLink test_ChangRoberts test_Dynamic test_KPT test_KSM
 
-PFD = check-version rand_test test_PFD
+PFD = check-version rand_test test_UFD
 ############################### Compile and run all tests - uses a wild card.
 test: $(TESTS)
 	@make --no-print-directory clean
@@ -155,7 +155,7 @@ test_%:
 	@./$(EXE) quantas/$(ALGFILE)/$*Input.json
 	@$(RM) quantas/$(ALGFILE)/*.o
 	@echo $(ALGFILE) successful
-	
+
 clean:
 	@$(RM) *.exe
 	@$(RM) *.out

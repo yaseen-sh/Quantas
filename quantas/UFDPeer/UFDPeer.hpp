@@ -22,12 +22,79 @@ namespace quantas{
 
     };
 
+     class PerfectFailureDetector{
+    public:
+        PerfectFailureDetector(int a) : timeTolerance(a) {}
+
+        // when we want to suspect a process
+        void                    suspectProcess(int peerID){
+           auto found = processList.find(peerID);
+           //if it's in the list, of course
+           if (found != processList.end()) {
+                found->second->second = true; //set flag to true
+           }
+        }
+        // if we get a message after suspected a process, we update our timeTolerance
+        void                    updateTolerance(int peerID, int roundNum){
+            int oldRound = processList.find(peerID)->second->first;
+            if(timeTolerance < newNum) //only change the tolerance if it's an increase
+                timeTolerance = roundNum - oldRound;
+
+            //also need to change the flag to false because no longer suspected
+            processList.find(peerID)->second->second = false;
+        }
+        // if we receive a heartbeat message from a process
+        void                    receiveHeartbeat(UFDPeerMessage msg){
+            
+            //look for the process in our suspectList
+            auto found = processList.find(msg.peerID);
+
+            //if somehow we don't have record of this process, insert it
+            if(found == processList.end()) 
+                processList.insert(std::make_pair(msg.peerID, std::make_pair(msg.roundNumber, false)));
+
+            //if the process is in the map
+            else{
+                // and if the process is mistakenly suspected
+                if((msg.roundNumber - found->second->first) > timeTolerance
+                    && found->second->second == true)
+                    updateTolerance(msg.peerID, msg.roundNumber);
+
+                // then (regardless) we update the map value for most recent heartbeat
+                found->second = msg.roundNumber;
+            }
+
+
+        }
+
+        bool                    checkReceived(vector<UFDPeerMessage> vec){
+            for(const auto& a : processList){
+                if(!a.second.second){
+                    bool found = false;
+                    for(int i = 0; i < vec.size(); ++i){
+                        if(vec[i].peerID == a.first){
+                            found = true;
+                            break;
+                        }                        
+                    }
+                    if(!found) return false;
+                }
+            }
+            return true;
+        }
+    //private:
+        // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
+        std::map<int, std::pair<int, bool>>   processList;
+        // how many rounds before we suspect a process?
+        int                      timeTolerance;
+    }
+
 
     class UFDPeer : public Peer<UFDPeerMessage>{
     public:
         // methods that must be defined when deriving from Peer
         UFDPeer                             (long);
-        UFDPeer                             (const UFDPeer& &rhs);
+        UFDPeer                             (const UFDPeer&);
         ~UFDPeer                            ();
 
         //= if we crash dont do anything
@@ -115,72 +182,7 @@ namespace quantas{
 
     };
 
-    class PerfectFailureDetector{
-    public:
-        PerfectFailureDetector(int a) : timeTolerance(a) {}
-
-        // when we want to suspect a process
-        void                    suspectProcess(int peerID){
-           auto found = processList.find(peerID);
-           //if it's in the list, of course
-           if (found != processList.end()) {
-                found->second->second = true; //set flag to true
-           }
-        }
-        // if we get a message after suspected a process, we update our timeTolerance
-        void                    updateTolerance(int peerID, int roundNum){
-            int oldRound = processList.find(peerID)->second->first;
-            if(timeTolerance < newNum) //only change the tolerance if it's an increase
-                timeTolerance = roundNum - oldRound;
-
-            //also need to change the flag to false because no longer suspected
-            processList.find(peerID)->second->second = false;
-        }
-        // if we receive a heartbeat message from a process
-        void                    receiveHeartbeat(UFDPeerMessage msg){
-            
-            //look for the process in our suspectList
-            auto found = processList.find(msg.peerID);
-
-            //if somehow we don't have record of this process, insert it
-            if(found == processList.end()) 
-                processList.insert(std::make_pair(msg.peerID, std::make_pair(msg.roundNumber, false)));
-
-            //if the process is in the map
-            else{
-                // and if the process is mistakenly suspected
-                if((msg.roundNumber - found->second->first) > timeTolerance
-                    && found->second->second == true)
-                    updateTolerance(msg.peerID, msg.roundNumber);
-
-                // then (regardless) we update the map value for most recent heartbeat
-                found->second = msg.roundNumber;
-            }
-
-
-        }
-
-        bool                    checkReceived(vector<UFDPeerMessage> vec){
-            for(const auto& a : processList){
-                if(!a.second.second){
-                    bool found = false;
-                    for(int i = 0; i < vec.size(); ++i){
-                        if(vec[i].peerID == a.first){
-                            found = true;
-                            break;
-                        }                        
-                    }
-                    if(!found) return false;
-                }
-            }
-            return true;
-        }
-    private:
-        // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
-        std::map<int, pair<int, bool>>   processList;
-        // how many rounds before we suspect a process?
-        int                      timeTolerance;
-    }
+   
     
     Simulation<quantas::UFDPeerMessage, quantas::UFDPeer>* generateSim();
 }
