@@ -26,6 +26,12 @@ namespace quantas{
     public:
         PerfectFailureDetector(int a) : timeTolerance(a) {}
 
+        //copy constructor with delegation
+        PerfectFailureDetector(PerfectFailureDetector& rhs) : PerfectFailureDetector(rhs.timeTolerance){
+            for(const auto& e : rhs.processList){
+                processList.insert(e);
+            }
+        }
         // when we want to suspect a process
         void                    suspectProcess(int peerID){
            auto found = processList.find(peerID);
@@ -153,7 +159,7 @@ namespace quantas{
 
         #pragma region carried over from PBFT
         // perform one step of the Algorithm with the messages in inStream
-        //void                 performComputation();
+        void                 performComputation();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
         //void                 endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers);
 

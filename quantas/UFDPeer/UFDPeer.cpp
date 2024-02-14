@@ -3,7 +3,7 @@
 
 namespace quantas {
 
-	int UFDPeer::currentTransaction = 1;
+	//int UFDPeer::currentTransaction = 1;
 
 	UFDPeer::~UFDPeer() {
 
@@ -204,6 +204,17 @@ namespace quantas {
 	}
 
 
+
+	// void UFDPeer::submitTrans(int tranID) {
+	// 	UFDPeerMessage message;
+	// 	message.messageType = "trans";
+	// 	message.trans = tranID;
+	// 	message.Id = id();
+	// 	message.roundSubmitted = getRound();
+	// 	broadcast(message);
+	// 	transactions.push_back(message);
+	// 	currentTransaction++;
+	// }
 
 	ostream& UFDPeer::printTo(ostream& out)const {
 		Peer<UFDPeerMessage>::printTo(out);
