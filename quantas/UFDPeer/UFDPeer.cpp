@@ -154,9 +154,9 @@ namespace quantas {
 				for(int k = 0; k = deltap.size(); ++k){
 					if(localList[k] == -1){
 						for (int i = 0; i < allMessages.size(); ++i){
-							if(allMessages[i].peerID == k && allMessages[i].deltap[k] != -1){
-								localList[k] = allMessages[i].deltap[k];
-								deltap[k] = allMessages[i].deltap[k];
+							if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
+								localList[k] = allMessages[i][k].deltap[k];
+								deltap[k] = allMessages[i][k].deltap[k];
 							}
 						}
 					}
