@@ -9,6 +9,10 @@ namespace quantas {
 
 	}
 
+	UFDPeer::UFDPeer() : Peer<UFDPeerMessage>() {
+		
+	}
+
 	UFDPeer::UFDPeer(const UFDPeer& rhs) : Peer<UFDPeerMessage>(rhs) {
 		
 	}
@@ -36,8 +40,8 @@ namespace quantas {
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
-		double length = peers[0]->confirmedTrans.size();
-		LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
+		//double length = peers[0]->deltap.size();
+		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 	}
 
 	void UFDPeer::initParameters(const vector<Peer<UFDPeerMessage>*>& _peers, json parameters) {
@@ -70,7 +74,7 @@ namespace quantas {
 
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat")
-				receiveHeartbeat(newMsg);
+				receiveHeartbeat(newMsg.getMessage());
 
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
@@ -109,7 +113,7 @@ namespace quantas {
 		broadcast(msg);
 	}
 
-	void UFDPeer::decide(){
+	int UFDPeer::decide(){
 		//given the values that we have in Vp now, we select the first non default value
 		//as per Chandra's algorithm (page 16 of UFD Paper)
 

@@ -24,8 +24,8 @@ namespace quantas{
 
     class PerfectFailureDetector{
     public:
+        PerfectFailureDetector() : timeTolerance(10) {}
         PerfectFailureDetector(int a) : timeTolerance(a) {}
-
         //copy constructor with delegation
         PerfectFailureDetector(PerfectFailureDetector& rhs) : PerfectFailureDetector(rhs.timeTolerance){
             for(const auto& e : rhs.processList){
@@ -101,6 +101,7 @@ namespace quantas{
     class UFDPeer : public Peer<UFDPeerMessage>{
     public:
         // methods that must be defined when deriving from Peer
+        UFDPeer                             ();
         UFDPeer                             (long);
         UFDPeer                             (const UFDPeer&);
         ~UFDPeer                            ();
@@ -155,13 +156,13 @@ namespace quantas{
         }
 
         //= select the first non default value as our decision
-        void                    decide();
+        int                    decide();
 
         #pragma region carried over from PBFT
         // perform one step of the Algorithm with the messages in inStream
         void                 performComputation();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
-        //void                 endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers);
+        void                 endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers);
 
         // addintal method that have defulte implementation from Peer but can be overwritten
         void                 log()const { printTo(*_log); };
@@ -183,6 +184,8 @@ namespace quantas{
         void                  checkInStrm();
         // checkContents loops through the receivedMessages attempting to advance the status of consensus
         void                  checkContents();
+
+        void                  initParameters(const vector<Peer<UFDPeerMessage>*>&, json);
         // submitTrans creates a transaction and broadcasts it to everyone
         //void                  submitTrans(int tranID);
 
