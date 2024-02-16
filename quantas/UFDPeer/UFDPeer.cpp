@@ -160,7 +160,19 @@ namespace quantas {
 							}
 						}
 					}
+					// if(localList[k] == -1){
+					// 	for (int i = 0; i < allMessages.size(); ++i){
+					// 		for(int j = 0; j < allMessages[i].size(); ++j){
+					// 			if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
+					// 				localList[k] = allMessages[i][j].deltap[k];
+					// 				deltap[k] = allMessages[i][k].deltap[k];
+					// 			}
+					// 		}
+					// 	}
+					// }
 				}
+
+
 				//set up the message to send deltaP
 				UFDPeerMessage msg;
 				msg.messageType = "consensus";
