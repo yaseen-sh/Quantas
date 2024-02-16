@@ -152,24 +152,24 @@ namespace quantas {
 
 				//update deltap values and Vp
 				for(int k = 0; k = deltap.size(); ++k){
-					if(localList[k] == -1){
-						for (int i = 0; i < allMessages.size(); ++i){
-							if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
-								localList[k] = allMessages[i][k].deltap[k];
-								deltap[k] = allMessages[i][k].deltap[k];
-							}
-						}
-					}
 					// if(localList[k] == -1){
 					// 	for (int i = 0; i < allMessages.size(); ++i){
-					// 		for(int j = 0; j < allMessages[i].size(); ++j){
-					// 			if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
-					// 				localList[k] = allMessages[i][j].deltap[k];
-					// 				deltap[k] = allMessages[i][k].deltap[k];
-					// 			}
+					// 		if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
+					// 			localList[k] = allMessages[i][k].deltap[k];
+					// 			deltap[k] = allMessages[i][k].deltap[k];
 					// 		}
 					// 	}
 					// }
+					if(localList[k] == -1){
+						for (int i = 0; i < allMessages.size(); ++i){
+							for(int j = 0; j < allMessages[i].size(); ++j){
+								if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
+									localList[k] = allMessages[i][j].deltap[k];
+									deltap[k] = allMessages[i][j].deltap[k];
+								}
+							}
+						}
+					}
 				}
 
 
