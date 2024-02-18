@@ -95,7 +95,7 @@ namespace quantas {
 			//else if its a consensus related message
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
 				//if we need to push_back
-				if(allMessages.size() < iteration){
+				if(allMessages.size() <= iteration){
 					std::cout << "checkInStrm newRound" << std::endl;
 					vector<UFDPeerMessage> stuff;
 					stuff.push_back(newMsg.getMessage());
