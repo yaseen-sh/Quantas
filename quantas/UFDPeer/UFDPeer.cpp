@@ -128,7 +128,7 @@ namespace quantas {
 		std::cout << "deciding..." << std::endl;
 		int i = 0;
 		if(!localList.empty()){
-			while(localList[i] != -1 && i < localList.size()){
+			while(i < localList.size() && localList[i] == -1){
 				++i;
 			}
 			std::cout << "decided on " << localList[i] << std::endl;
