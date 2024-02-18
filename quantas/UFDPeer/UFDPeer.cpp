@@ -157,7 +157,7 @@ namespace quantas {
 		if(phase == 1){
 			
 			//CHECK TO SEE IF WE HAVE RECIEVED MESSAGES
-			if(!allMessages.empty()){
+			if(!allMessages.size() <= iteration){
 
 				if (PFD.checkReceived(allMessages[iteration])){
 					std::cout << "if checkReceived(allMessages[iteration])" << std::endl;
@@ -168,7 +168,7 @@ namespace quantas {
 					deltap[id()] = proposal;
 
 					//update deltap values and Vp
-					for(int k = 0; k = deltap.size(); ++k){
+					for(int k = 0; k < deltap.size(); ++k){
 						// if(localList[k] == -1){
 						// 	for (int i = 0; i < allMessages.size(); ++i){
 						// 		if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
