@@ -6,10 +6,10 @@ namespace quantas {
 	//int UFDPeer::currentTransaction = 1;
 
 	UFDPeer::~UFDPeer() {
-
 	}
 
 	UFDPeer::UFDPeer() : Peer<UFDPeerMessage>() {
+		
 	}
 
 	UFDPeer::UFDPeer(const UFDPeer& rhs) : Peer<UFDPeerMessage>(rhs) {
@@ -38,7 +38,22 @@ namespace quantas {
 	}
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
+		std::cout << "ENDOFROUND()" << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
+		// for(int i = 0; i < peers.size(); ++i){
+		// 	//resize the vectors
+		// 	peers[i]->deltap.resize(peers.size());
+		// 	peers[i]->localList.resize(peers.size()); 
+		// 	std::cout << "resized deltap and localList" << std::endl;
+		// 	//initialize vectors to bottom (-1)
+		// 	for(int j = 0; j < deltap.size(); ++j){
+		// 		peers[i]->deltap[j] = -1;
+		// 		peers[i]->localList[j] = -1;
+		// 	}
+		// 	//set proposal values and update deltap's
+		// 	peers[i]->proposal = rand() % 2; // 0 or 1
+		// 	peers[i]->deltap[peers[i]->id()] = peers[i]->proposal;
+		// }
 		//double length = peers[0]->deltap.size();
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 	}
@@ -50,6 +65,7 @@ namespace quantas {
 			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
 			peers[i]->localList.resize(peers.size()); 
+			std::cout << "resized deltap and localList" << std::endl;
 			//initialize vectors to bottom (-1)
 			for(int j = 0; j < deltap.size(); ++j){
 				peers[i]->deltap[j] = -1;
@@ -66,30 +82,33 @@ namespace quantas {
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
-			
-
 			//handle receiving a heartbeat
-			if(newMsg.getMessage().messageType == "heartbeat")
+			if(newMsg.getMessage().messageType == "heartbeat"){
+				std::cout << "checkInStrm heartbeat" << std::endl;
 				receiveHeartbeat(newMsg.getMessage());
-
+			}
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
+				std::cout << "checkInStrm suspect" << std::endl;
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
 			//else if its a consensus related message
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
 				//if we need to push_back
 				if(allMessages.size() < iteration){
+					std::cout << "checkInStrm newRound" << std::endl;
 					vector<UFDPeerMessage> stuff;
 					stuff.push_back(newMsg.getMessage());
 					allMessages.push_back(stuff);
 				}
 				else{
+					std::cout << "checkInStrm newMessage" << std::endl;
 					allMessages[iteration].push_back(newMsg.getMessage());
 				}
 			}
 			//if its phase 2
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 2){
+				std::cout << "checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 			}
 				
@@ -106,12 +125,16 @@ namespace quantas {
 	int UFDPeer::decide(){
 		//given the values that we have in Vp now, we select the first non default value
 		//as per Chandra's algorithm (page 16 of UFD Paper)
-
+		std::cout << "deciding..." << std::endl;
 		int i = 0;
-		while(localList[i] != -1 && i < localList.size()){
-			++i;
+		if(!localList.empty()){
+			while(localList[i] != -1 && i < localList.size()){
+				++i;
+			}
+			std::cout << "decided on " << localList[i] << std::endl;
+			return localList[i];
 		}
-		return localList[i];
+		else return -1;
 
 	}
 
@@ -129,40 +152,50 @@ namespace quantas {
 			broadcast(msg);
 			++phase;
 		}
+		std::cout << "checkContents phase 0 done" << std::endl;
 		//phase 1: send message with roundNum, deltaP, ID 
 		if(phase == 1){
 			
 			//CHECK TO SEE IF WE HAVE RECIEVED MESSAGES
-			if (PFD.checkReceived(allMessages[iteration])){
-				//Initialize deltap
-				for(int i = 0; i < deltap.size(); ++i){
-					deltap[i] = -1;
-				}
-				deltap[id()] = proposal;
+			if(!allMessages.empty()){
 
-				//update deltap values and Vp
-				for(int k = 0; k = deltap.size(); ++k){
-					// if(localList[k] == -1){
-					// 	for (int i = 0; i < allMessages.size(); ++i){
-					// 		if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
-					// 			localList[k] = allMessages[i][k].deltap[k];
-					// 			deltap[k] = allMessages[i][k].deltap[k];
-					// 		}
-					// 	}
-					// }
-					if(localList[k] == -1){
-						for (int i = 0; i < allMessages.size(); ++i){
-							for(int j = 0; j < allMessages[i].size(); ++j){
-								if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
-									localList[k] = allMessages[i][j].deltap[k];
-									deltap[k] = allMessages[i][j].deltap[k];
+				if (PFD.checkReceived(allMessages[iteration])){
+					std::cout << "if checkReceived(allMessages[iteration])" << std::endl;
+					//Initialize deltap
+					for(int i = 0; i < deltap.size(); ++i){
+						deltap[i] = -1;
+					}
+					deltap[id()] = proposal;
+
+					//update deltap values and Vp
+					for(int k = 0; k = deltap.size(); ++k){
+						// if(localList[k] == -1){
+						// 	for (int i = 0; i < allMessages.size(); ++i){
+						// 		if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
+						// 			localList[k] = allMessages[i][k].deltap[k];
+						// 			deltap[k] = allMessages[i][k].deltap[k];
+						// 		}
+						// 	}
+						// }
+						std::cout << "k: " << k << std::endl;
+						if(localList[k] == -1){
+							std::cout << "if localList[k] == -1" << std::endl;
+							for (int i = 0; i < allMessages.size(); ++i){
+								std::cout << "i: " << i << std::endl;
+								for(int j = 0; j < allMessages[i].size(); ++j){
+									std::cout << "j: " << j << std::endl;
+									if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
+										std::cout << "if allMessages[i][j].deltap[k] != -1" << std::endl;
+										localList[k] = allMessages[i][j].deltap[k];
+										deltap[k] = allMessages[i][j].deltap[k];
+									}
 								}
 							}
 						}
 					}
-				}
-
-
+			}
+			else std::cout << "allMessages is empty" << std::endl;
+			
 				//set up the message to send deltaP
 				UFDPeerMessage msg;
 				msg.messageType = "consensus";
@@ -176,9 +209,9 @@ namespace quantas {
 			if(iteration == deltap.size())
 				++phase;
 		}
-
+		std::cout << "checkContents Phase 1 done" << std::endl;
 		//phase 2: send Vp to all processes
-		else if(phase == 2){
+		if(phase == 2){
 			//set up message to send Vp
 			UFDPeerMessage msg;
 			msg.messageType = "consensus";
@@ -203,10 +236,11 @@ namespace quantas {
 			
 			++phase;
 		}
-
-		else if (phase == 3){
+		std::cout << "checkContents Phase 2 done" << std::endl;
+		if (phase == 3){
 			decision = decide();
 		}
+		std::cout << "checkContents Phase 3 done" << std::endl;
 	}
 
 

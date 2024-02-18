@@ -1,7 +1,7 @@
 {
     "experiments": [
       {
-        "algorithm": "PFD",
+        "algorithm": "UFDPeer",
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
         "distribution": {

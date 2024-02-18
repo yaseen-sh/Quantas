@@ -185,7 +185,7 @@ namespace quantas{
         // checkContents loops through the receivedMessages attempting to advance the status of consensus
         void                  checkContents();
 
-        void                  initParameters(const vector<Peer<UFDPeerMessage>*>&, json);
+        void                  initParameters(const vector<Peer<UFDPeerMessage>*>&, json) override;
         // submitTrans creates a transaction and broadcasts it to everyone
         //void                  submitTrans(int tranID);
 
