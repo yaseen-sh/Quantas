@@ -10,18 +10,17 @@ namespace quantas {
 	}
 
 	UFDPeer::UFDPeer() : Peer<UFDPeerMessage>() {
-		
 	}
 
 	UFDPeer::UFDPeer(const UFDPeer& rhs) : Peer<UFDPeerMessage>(rhs) {
-		
 	}
 
 	UFDPeer::UFDPeer(long id) : Peer(id) {
-
 	}
 
 	void UFDPeer::performComputation() {
+		std::cout << "PERFORMCOMPUTATION()" << std::endl;
+
 		if (crashed) {
 			return;
 		}
@@ -45,9 +44,9 @@ namespace quantas {
 	}
 
 	void UFDPeer::initParameters(const vector<Peer<UFDPeerMessage>*>& _peers, json parameters) {
+		std::cout << "INIT PARAMETERS" << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 		for(int i = 0; i < peers.size(); ++i){
-			
 			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
 			peers[i]->localList.resize(peers.size()); 
@@ -68,9 +67,6 @@ namespace quantas {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
 			
-/* 			if (newMsg.getMessage().messageType == "trans") {
-				transactions.push_back(newMsg.getMessage());
-			} */
 
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat")
@@ -83,13 +79,13 @@ namespace quantas {
 			//else if its a consensus related message
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
 				//if we need to push_back
-				if(allMessages.size() < getRound()){
+				if(allMessages.size() < iteration){
 					vector<UFDPeerMessage> stuff;
 					stuff.push_back(newMsg.getMessage());
 					allMessages.push_back(stuff);
 				}
 				else{
-					allMessages[getRound()].push_back(newMsg.getMessage());
+					allMessages[iteration].push_back(newMsg.getMessage());
 				}
 			}
 			//if its phase 2
@@ -97,12 +93,6 @@ namespace quantas {
 				lastMessages.push_back(newMsg.getMessage());
 			}
 				
-/* 			else {
-				while (receivedMessages.size() < newMsg.getMessage().sequenceNum + 1) {
-					receivedMessages.push_back(vector<UFDPeerMessage>());
-				}
-				receivedMessages[newMsg.getMessage().sequenceNum].push_back(newMsg.getMessage());
-			} */
 		}
 	}
 
@@ -219,18 +209,6 @@ namespace quantas {
 		}
 	}
 
-
-
-	// void UFDPeer::submitTrans(int tranID) {
-	// 	UFDPeerMessage message;
-	// 	message.messageType = "trans";
-	// 	message.trans = tranID;
-	// 	message.Id = id();
-	// 	message.roundSubmitted = getRound();
-	// 	broadcast(message);
-	// 	transactions.push_back(message);
-	// 	currentTransaction++;
-	// }
 
 	ostream& UFDPeer::printTo(ostream& out)const {
 		Peer<UFDPeerMessage>::printTo(out);
