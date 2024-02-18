@@ -4,6 +4,9 @@
         "algorithm": "UFDPeer",
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
+        "parameters" : {
+          "toCrash": 5
+        },
         "distribution": {
           "type": "uniform",
           "maxDelay": 1
