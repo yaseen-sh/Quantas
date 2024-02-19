@@ -40,22 +40,9 @@ namespace quantas {
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
 		std::cout << "ENDOFROUND()" << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
-		// for(int i = 0; i < peers.size(); ++i){
-		// 	//resize the vectors
-		// 	peers[i]->deltap.resize(peers.size());
-		// 	peers[i]->localList.resize(peers.size()); 
-		// 	std::cout << "resized deltap and localList" << std::endl;
-		// 	//initialize vectors to bottom (-1)
-		// 	for(int j = 0; j < deltap.size(); ++j){
-		// 		peers[i]->deltap[j] = -1;
-		// 		peers[i]->localList[j] = -1;
-		// 	}
-		// 	//set proposal values and update deltap's
-		// 	peers[i]->proposal = rand() % 2; // 0 or 1
-		// 	peers[i]->deltap[peers[i]->id()] = peers[i]->proposal;
-		// }
-		//double length = peers[0]->deltap.size();
+		
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
+
 	}
 
 	void UFDPeer::initParameters(const vector<Peer<UFDPeerMessage>*>& _peers, json parameters) {
@@ -82,6 +69,8 @@ namespace quantas {
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg);
+			
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat"){
 				std::cout << "checkInStrm heartbeat" << std::endl;
