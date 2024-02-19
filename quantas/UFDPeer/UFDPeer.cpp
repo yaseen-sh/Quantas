@@ -69,8 +69,8 @@ namespace quantas {
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg);
-			
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
+
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat"){
 				std::cout << "checkInStrm heartbeat" << std::endl;
