@@ -106,6 +106,9 @@ namespace quantas{
         UFDPeer                             (const UFDPeer&);
         ~UFDPeer                            ();
 
+        //= crashing related variables
+        int                                 crashRound = -1; //if -1 dont crash, else crash at given round
+
         //= if we crash dont do anything
         bool                                crashed = false;
 
@@ -136,6 +139,8 @@ namespace quantas{
         //= phase 1 keep track var
         int                                 iteration = 0;
 
+
+
         //= different from regular messages, we need to send a heartbeat
         void                  sendHeartbeat();
 
@@ -144,15 +149,16 @@ namespace quantas{
             PFD.receiveHeartbeat(msg);
         }
 
-        //= function to make the process crash, gets called however setup
+        //= function to make the process crash (not working)
         void                    crash(){
-            crashed = true;
             //create a special suspect message to others and broadcast
             UFDPeerMessage msg;
             msg.peerID = id();
             msg.messageType = "suspect";
             broadcast(msg);
-            PFD.suspectProcess(id()); //suspect itself
+            std::cout << "Crashed " << id() << std::endl;
+            crashed = true;
+            //PFD.suspectProcess(id()); //suspect itself
         }
 
         //= select the first non default value as our decision
@@ -169,16 +175,6 @@ namespace quantas{
         ostream&             printTo(ostream&)const;
         friend ostream& operator<<         (ostream&, const UFDPeer&);
 
-        // string indicating the current status of a node
-        //string                          status = "pre-prepare";
-
-        // latency of confirmed transactions
-        //int                             latency = 0;
-        // rate at which to submit transactions ie 1 in x chance for all n nodes
-        //int                             submitRate = 20;
-        
-        // the id of the next transaction to submit
-        //static int                      currentTransaction;
 
         // checkInStrm loops through the in stream adding messsages to receivedMessages or transactions
         void                  checkInStrm();

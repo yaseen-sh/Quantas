@@ -38,9 +38,14 @@ namespace quantas {
 	}
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
-		//std::cout << "ENDOFROUND()" << std::endl;
+		std::cout << "ENDOFROUND " << getRound() << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
-		
+
+		//not working for some reason
+		if(getRound() != -1 && getRound() == crashRound - 1){
+			std::cout << "CRASHING " << id() << std::endl;
+			crash(); //crash the process this round
+		}
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 
 	}
@@ -48,11 +53,22 @@ namespace quantas {
 	void UFDPeer::initParameters(const vector<Peer<UFDPeerMessage>*>& _peers, json parameters) {
 		//std::cout << "INIT PARAMETERS" << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
+		
+		//set up for crashing processes
+		int crashCount = parameters["toCrash"];
+		std::cout << crashCount << " peers to crash" <<  std::endl;
+		for(int i = 0; i < crashCount; ++i){ 						//toCrash is parameters[0]
+			int index = rand() % peers.size(); 						//select a peer to crash
+			int roundToCrash = rand() % int(parameters["totalRounds"]); 	//random round in
+			peers[index]->crashRound = roundToCrash; 				//tell process when to crash
+			std::cout << "Peer " << index << " to crash in " << peers[index]->crashRound << std::endl;
+
+		}
+
 		for(int i = 0; i < peers.size(); ++i){
 			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
 			peers[i]->localList.resize(peers.size()); 
-			//std::cout << "resized deltap and localList" << std::endl;
 			//initialize vectors to bottom (-1)
 			for(int j = 0; j < deltap.size(); ++j){
 				peers[i]->deltap[j] = -1;
@@ -79,7 +95,8 @@ namespace quantas {
 			}
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
-				//std::cout << "checkInStrm suspect" << std::endl;
+				std::cout << "checkInStrm suspect" << std::endl;
+				if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().messageType);
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
 			//else if its a consensus related message
@@ -102,7 +119,7 @@ namespace quantas {
 			//if its phase 2
 			else if (newMsg.getMessage().messageType == "consensus2"){
 				if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
+					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2"].push_back(newMsg.getMessage().deltap);
 				//std::cout << "checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 			}
@@ -152,8 +169,9 @@ namespace quantas {
 			allMessages.push_back(stuff);
 			
 			++phase;
+			std::cout << "checkContents phase 0 done" << std::endl;
 		}
-		//std::cout << "checkContents phase 0 done" << std::endl;
+		
 		//phase 1: send message with roundNum, deltaP, ID 
 		if(phase == 1){
 			
@@ -161,7 +179,6 @@ namespace quantas {
 			if(!allMessages.size() <= iteration){
 
 				if (PFD.checkReceived(allMessages[iteration])){
-					//std::cout << "if checkReceived(allMessages[iteration])" << std::endl;
 					//Initialize deltap
 					for(int i = 0; i < deltap.size(); ++i){
 						deltap[i] = -1;
@@ -170,15 +187,10 @@ namespace quantas {
 
 					//update deltap values and Vp
 					for(int k = 0; k < deltap.size(); ++k){
-						//std::cout << "k: " << k << std::endl;
 						if(localList[k] == -1){
-							//std::cout << "if localList[k] == -1" << std::endl;
 							for (int i = 0; i < allMessages.size(); ++i){
-								//std::cout << "i: " << i << std::endl;
 								for(int j = 0; j < allMessages[i].size(); ++j){
-									//std::cout << "j: " << j << std::endl;
-									if(/*allMessages[i][j].peerID == k && */ allMessages[i][j].deltap[k] != -1){
-										//std::cout << "if allMessages[i][j].deltap[k] != -1" << std::endl;
+									if(allMessages[i][j].deltap[k] != -1){
 										localList[k] = allMessages[i][j].deltap[k];
 										deltap[k] = allMessages[i][j].deltap[k];
 									}
