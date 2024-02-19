@@ -25,13 +25,11 @@ namespace quantas {
 			std::cout << id() << " is crashed" << std::endl;
 			return;
 		}
-		if (true)
+		else if (true){
 			checkInStrm();
 
-		if (true)
 			checkContents();
-		
-		if(true){
+
 			if(getRound() % 6 == 0) //6 is arbitrary, but we don't want to send a heartbeat every round. make it smarter later.
 				sendHeartbeat();
 		}
