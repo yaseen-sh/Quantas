@@ -121,7 +121,7 @@ namespace quantas {
 		int value = -1;
 	
 		for(int i = 0; i < localList.size(); ++i){
-			if(localList[i] == -1){
+			if(localList[i] != -1){
 				value = localList[i];
 				break;
 			}
@@ -245,8 +245,9 @@ namespace quantas {
 		if (phase == 3){
 			decision = decide();
 			++phase;
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["Decides"][id()].push_back(decision);
 			std::cout << "checkContents Phase 3 done" << std::endl;
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["Decides"][id()].push_back(decision);
+			
 		}
 		
 	}
