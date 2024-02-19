@@ -82,7 +82,7 @@ namespace quantas {
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
 			//else if its a consensus related message
-			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
+			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
 				LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
 
@@ -98,7 +98,7 @@ namespace quantas {
 				}
 			}
 			//if its phase 2
-			else if (newMsg.getMessage().messageType == "consensus" && phase == 2){
+			else if (newMsg.getMessage().messageType == "consensus2"){
 				LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
 				//std::cout << "checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
@@ -205,26 +205,19 @@ namespace quantas {
 							allMessages[iteration].push_back(msg);
 						}
 					}
-					
+
 					else {
 						++phase;
 						//set up message to send Vp (phase 2)
 						UFDPeerMessage msg;
-						msg.messageType = "consensus";
+						msg.messageType = "consensus2";
 						msg.peerID = id();
 						msg.deltap = localList;
 						//send the message
 						broadcast(msg);
 
 						//send to self
-						if(allMessages.size() <= iteration){
-							vector<UFDPeerMessage> stuff;
-							stuff.push_back(msg);
-							allMessages.push_back(stuff);
-						}
-						else{
-							allMessages[iteration].push_back(msg);
-						}
+						lastMessages.push_back(msg);
 					}
 				}
 			}
