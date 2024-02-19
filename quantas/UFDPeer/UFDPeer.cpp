@@ -126,7 +126,7 @@ namespace quantas {
 				break;
 			}
 		}
-		std::cout << "decided on " << localList[i] << std::endl;
+		std::cout << "decided on " << value << std::endl;
 		return value;
 	}
 
