@@ -74,7 +74,7 @@ namespace quantas{
 
 
         }
-
+        //checks if all non suspected processes have a msg in vec
         bool                    checkReceived(vector<UFDPeerMessage> vec){
             for(const auto& a : processList){
                 if(!a.second.second){
