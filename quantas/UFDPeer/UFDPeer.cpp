@@ -118,16 +118,16 @@ namespace quantas {
 		//given the values that we have in Vp now, we select the first non default value
 		//as per Chandra's algorithm (page 16 of UFD Paper)
 		//std::cout << "deciding..." << std::endl;
-		int i = 0;
-		if(!localList.empty()){
-			while(i < localList.size() && localList[i] == -1){
-				++i;
+		int value = -1;
+	
+		for(int i = 0; i < localList.size(); ++i){
+			if(localList[i] == -1){
+				value = localList[i];
+				break;
 			}
-			//std::cout << "decided on " << localList[i] << std::endl;
-			return localList[i];
 		}
-		else return -1;
-
+		std::cout << "decided on " << localList[i] << std::endl;
+		return value;
 	}
 
 	void UFDPeer::checkContents() {
@@ -167,14 +167,6 @@ namespace quantas {
 
 					//update deltap values and Vp
 					for(int k = 0; k < deltap.size(); ++k){
-						// if(localList[k] == -1){
-						// 	for (int i = 0; i < allMessages.size(); ++i){
-						// 		if(allMessages[i][k].peerID == k && allMessages[i][k].deltap[k] != -1){
-						// 			localList[k] = allMessages[i][k].deltap[k];
-						// 			deltap[k] = allMessages[i][k].deltap[k];
-						// 		}
-						// 	}
-						// }
 						//std::cout << "k: " << k << std::endl;
 						if(localList[k] == -1){
 							//std::cout << "if localList[k] == -1" << std::endl;
@@ -216,7 +208,7 @@ namespace quantas {
 			}
 			if(iteration == deltap.size()){
 				++phase;
-				//set up message to send Vp (pphase 2)
+				//set up message to send Vp (phase 2)
 				UFDPeerMessage msg;
 				msg.messageType = "consensus";
 				msg.peerID = id();
@@ -235,9 +227,9 @@ namespace quantas {
 					allMessages[iteration].push_back(msg);
 				}
 			}
-				
+			std::cout << "checkContents Phase 1 done" << std::endl;		
 		}
-		//std::cout << "checkContents Phase 1 done" << std::endl;
+		
 		//phase 2: send Vp to all processes
 		if(phase == 2){			
 
@@ -253,15 +245,16 @@ namespace quantas {
 				}
 				++phase;
 			}
-			
+			std::cout << "checkContents Phase 2 done" << std::endl;	
 		}
-		//std::cout << "checkContents Phase 2 done" << std::endl;
+		
 		if (phase == 3){
 			decision = decide();
 			++phase;
 			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["Decides"][id()].push_back(decision);
+			std::cout << "checkContents Phase 3 done" << std::endl;
 		}
-		//std::cout << "checkContents Phase 3 done" << std::endl;
+		
 	}
 
 
