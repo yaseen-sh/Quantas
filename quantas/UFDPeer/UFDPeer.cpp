@@ -22,6 +22,7 @@ namespace quantas {
 		//std::cout << "PERFORMCOMPUTATION()" << std::endl;
 
 		if (crashed) {
+			std::cout << id() << " is crashed" << std::endl;
 			return;
 		}
 		if (true)

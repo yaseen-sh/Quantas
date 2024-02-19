@@ -158,7 +158,7 @@ namespace quantas{
             broadcast(msg);
             std::cout << "Crashed " << id() << std::endl;
             crashed = true;
-            //PFD.suspectProcess(id()); //suspect itself
+            PFD.suspectProcess(id()); //suspect itself
         }
 
         //= select the first non default value as our decision
