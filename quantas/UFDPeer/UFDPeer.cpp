@@ -56,9 +56,16 @@ namespace quantas {
 		//set up for crashing processes
 		int crashCount = parameters["toCrash"];
 		std::cout << crashCount << " peers to crash" <<  std::endl;
+
+		vector<int> peersToCrash; peersToCrash.resize(crashCount);
 		for(int i = 0; i < crashCount; ++i){ 						//toCrash is parameters[0]
 			int index = rand() % peers.size(); 						//select a peer to crash
-			int roundToCrash = rand() % int(parameters["totalRounds"]); 	//random round in
+
+			while (peersToCrash.find(index) != peersToCrash.end()) {//if it's a unique index
+				index = rand() % peers.size();
+			}
+			peersToCrash[i] = index;								//now add it to the list
+ 			int roundToCrash = rand() % int(parameters["totalRounds"]); 	//when to crash
 			peers[index]->crashRound = roundToCrash; 				//tell process when to crash
 			std::cout << "Peer " << index << " to crash in " << peers[index]->crashRound << std::endl;
 

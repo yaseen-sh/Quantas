@@ -164,28 +164,23 @@ namespace quantas{
         //= select the first non default value as our decision
         int                    decide();
 
-        #pragma region carried over from PBFT
         // perform one step of the Algorithm with the messages in inStream
         void                 performComputation();
         // perform any calculations needed at the end of a round such as determine throughput (only ran once, not for every peer)
         void                 endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers);
 
-        // addintal method that have defulte implementation from Peer but can be overwritten
+        // additional method that have default implementation from Peer but can be overwritten
         void                 log()const { printTo(*_log); };
         ostream&             printTo(ostream&)const;
         friend ostream& operator<<         (ostream&, const UFDPeer&);
-
 
         // checkInStrm loops through the in stream adding messsages to receivedMessages or transactions
         void                  checkInStrm();
         // checkContents loops through the receivedMessages attempting to advance the status of consensus
         void                  checkContents();
 
+        //setup function
         void                  initParameters(const vector<Peer<UFDPeerMessage>*>&, json) override;
-        // submitTrans creates a transaction and broadcasts it to everyone
-        //void                  submitTrans(int tranID);
-
-        #pragma endregion
 
     };
 
