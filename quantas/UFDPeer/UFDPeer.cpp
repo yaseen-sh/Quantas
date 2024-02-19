@@ -37,11 +37,11 @@ namespace quantas {
 	}
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
-		std::cout << "ENDOFROUND " << getRound() << std::endl;
+		//std::cout << "ENDOFROUND " << getRound() << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 
 		//not working for some reason
-		if(getRound() != -1 && getRound() == crashRound - 1){
+		if(crashRound != -1 && getRound() == crashRound - 1){
 			std::cout << "CRASHING " << id() << std::endl;
 			crash(); //crash the process this round
 		}
