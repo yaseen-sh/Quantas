@@ -69,11 +69,11 @@ namespace quantas {
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
 
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat"){
 				std::cout << "checkInStrm heartbeat" << std::endl;
+				LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().messageType);
 				receiveHeartbeat(newMsg.getMessage());
 			}
 			//we use magic to tell every process to suspect a process when it crashes
@@ -84,6 +84,8 @@ namespace quantas {
 			//else if its a consensus related message
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 1) {
 				//if we need to push_back
+				LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
+
 				if(allMessages.size() <= iteration){
 					std::cout << "checkInStrm newRound" << std::endl;
 					vector<UFDPeerMessage> stuff;
@@ -97,6 +99,7 @@ namespace quantas {
 			}
 			//if its phase 2
 			else if (newMsg.getMessage().messageType == "consensus" && phase == 2){
+				LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
 				std::cout << "checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 			}
