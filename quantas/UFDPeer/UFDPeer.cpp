@@ -249,7 +249,7 @@ namespace quantas {
 			decision = decide();
 			++phase;
 			std::cout << "Peer " << id() << " checkContents Phase 3 done, decided on " << decision <<  std::endl;
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][id()]["Decides"].push_back(decision);
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Decides"].push_back(decision);
 		}
 		
 	}
