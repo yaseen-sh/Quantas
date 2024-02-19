@@ -183,56 +183,57 @@ namespace quantas {
 							}
 						}
 					}
-				}
-			}
-			else {//std::cout << "allMessages is empty" << std::endl;
-			
-				//set up the message to send deltaP
-				UFDPeerMessage msg;
-				msg.messageType = "consensus";
-				msg.peerID = id();
-				msg.roundNumber = ++iteration;
-				msg.deltap = deltap;
-				//send the message
-				broadcast(msg);
-							//send to self
-				if(allMessages.size() <= iteration){
-					vector<UFDPeerMessage> stuff;
-					stuff.push_back(msg);
-					allMessages.push_back(stuff);
-				}
-				else{
-					allMessages[iteration].push_back(msg);
-				}
-				
-			}
-			if(iteration == deltap.size()){
-				++phase;
-				//set up message to send Vp (phase 2)
-				UFDPeerMessage msg;
-				msg.messageType = "consensus";
-				msg.peerID = id();
-				msg.roundNumber = ++iteration;
-				msg.deltap = localList;
-				//send the message
-				broadcast(msg);
 
-				//send to self
-				if(allMessages.size() <= iteration){
-					vector<UFDPeerMessage> stuff;
-					stuff.push_back(msg);
-					allMessages.push_back(stuff);
-				}
-				else{
-					allMessages[iteration].push_back(msg);
+
+					//starting next iteration
+					if(iteration < deltap.size() -1){
+						//set up the message to send deltaP
+						UFDPeerMessage msg;
+						msg.messageType = "consensus";
+						msg.peerID = id();
+						msg.roundNumber = ++iteration;
+						msg.deltap = deltap;
+						//send the message
+						broadcast(msg);
+						//send to self
+						if(allMessages.size() <= iteration){
+							vector<UFDPeerMessage> stuff;
+							stuff.push_back(msg);
+							allMessages.push_back(stuff);
+						}
+						else{
+							allMessages[iteration].push_back(msg);
+						}
+					}
+					
+					else {
+						++phase;
+						//set up message to send Vp (phase 2)
+						UFDPeerMessage msg;
+						msg.messageType = "consensus";
+						msg.peerID = id();
+						msg.deltap = localList;
+						//send the message
+						broadcast(msg);
+
+						//send to self
+						if(allMessages.size() <= iteration){
+							vector<UFDPeerMessage> stuff;
+							stuff.push_back(msg);
+							allMessages.push_back(stuff);
+						}
+						else{
+							allMessages[iteration].push_back(msg);
+						}
+					}
 				}
 			}
+
 			std::cout << "checkContents Phase 1 done" << std::endl;		
 		}
 		
 		//phase 2: send Vp to all processes
 		if(phase == 2){			
-
 			//query the failure detector
 			if(PFD.checkReceived(lastMessages)){
 				//look for default values and set localList to match them
