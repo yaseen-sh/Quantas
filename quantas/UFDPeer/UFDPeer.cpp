@@ -191,6 +191,7 @@ namespace quantas {
 							}
 						}
 					}
+				}
 			}
 			else {//std::cout << "allMessages is empty" << std::endl;
 			
