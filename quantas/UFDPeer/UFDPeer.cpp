@@ -248,9 +248,8 @@ namespace quantas {
 		if (phase == 3){
 			decision = decide();
 			++phase;
-			std::cout << "checkContents Phase 3 done" << std::endl;
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["Decides"][id()].push_back(decision);
-			
+			std::cout << "checkContents Phase 3 done, decided on " << decision <<  std::endl;
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][id()]["Decides"].push_back(decision);
 		}
 		
 	}
