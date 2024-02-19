@@ -198,21 +198,22 @@ namespace quantas {
 				broadcast(msg);
 				//TODO: also message our own vector
 			}
-			if(iteration == deltap.size())
+			if(iteration == deltap.size()){
 				++phase;
+				//set up message to send Vp (pphase 2)
+				UFDPeerMessage msg;
+				msg.messageType = "consensus";
+				msg.peerID = id();
+				msg.roundNumber = ++iteration;
+				msg.deltap = localList;
+				//send the message
+				broadcast(msg);
+			}
+				
 		}
 		std::cout << "checkContents Phase 1 done" << std::endl;
 		//phase 2: send Vp to all processes
-		if(phase == 2){
-			//set up message to send Vp
-			UFDPeerMessage msg;
-			msg.messageType = "consensus";
-			msg.peerID = id();
-			msg.roundNumber = ++iteration;
-			msg.deltap = localList;
-
-			//send the message
-			broadcast(msg);
+		if(phase == 2){			
 
 			//query the failure detector
 			if(PFD.checkReceived(lastMessages)){
@@ -231,6 +232,8 @@ namespace quantas {
 		std::cout << "checkContents Phase 2 done" << std::endl;
 		if (phase == 3){
 			decision = decide();
+			++phase;
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["Decides"][id()].push_back(decision);
 		}
 		std::cout << "checkContents Phase 3 done" << std::endl;
 	}
