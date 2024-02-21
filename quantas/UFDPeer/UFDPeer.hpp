@@ -42,13 +42,13 @@ namespace quantas{
         }
         // if we get a message after suspected a process, we update our timeTolerance
         void                    updateTolerance(int peerID, int roundNum){
-            int oldRound = processList.find(peerID)->second.first;
+            int oldRound = processList[peerID].first;
             int newNum = roundNum - oldRound; //find the difference between last detection and now
             if(timeTolerance < newNum) //only change the tolerance if it's an increase
                 timeTolerance = roundNum - oldRound;
 
             //also need to change the flag to false because no longer suspected
-            processList.find(peerID)->second.second = false;
+            processList[peerID].second = false;
         }
         // if we receive a heartbeat message from a process
         void                    receiveHeartbeat(UFDPeerMessage msg){
@@ -77,18 +77,23 @@ namespace quantas{
         //checks if all non suspected processes have a msg in vec
         bool                    checkReceived(vector<UFDPeerMessage> vec){
             for(const auto& a : processList){
+                //if we DONT suspect it
                 if(!a.second.second){
                     bool found = false;
+                    //check if we received a message from it
                     for(int i = 0; i < vec.size(); ++i){
                         if(vec[i].peerID == a.first){
                             found = true;
                             break;
                         }                        
                     }
-                    if(!found) return false;
+                    if(!found) {
+                        return false;
+                    }
                 }
             }
             return true;
+
         }
     //private:
         // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)

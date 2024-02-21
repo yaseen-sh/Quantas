@@ -5,20 +5,21 @@
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 5,
-          "totalRounds": 50
+          "toCrash": 0,
+          "totalRounds": 20,
+          "tolerance": 10
         },
         "distribution": {
           "type": "uniform",
-          "maxDelay": 1
+          "maxDelay": 2
         },
         "topology": {
           "type": "complete",
-          "initialPeers": 20,
-          "totalPeers": 20
+          "initialPeers": 5,
+          "totalPeers": 5
         },
         "tests": 1,
-        "rounds": 50
+        "rounds": 60
       }
     ]
   }

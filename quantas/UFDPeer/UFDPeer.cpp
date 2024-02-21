@@ -21,6 +21,13 @@ namespace quantas {
 	void UFDPeer::performComputation() {
 		//std::cout << "PERFORMCOMPUTATION()" << std::endl;
 
+				
+		if(getRound() == crashRound){
+			std::cout << "CRASHING " << id() << std::endl;
+			crash(); //crash the process this round
+			return;
+		}
+
 		if (crashed) {
 			std::cout << id() << " is crashed" << std::endl;
 			return;
@@ -33,18 +40,14 @@ namespace quantas {
 			if(getRound() % 6 == 0) //6 is arbitrary, but we don't want to send a heartbeat every round. make it smarter later.
 				sendHeartbeat();
 		}
+	
 
 	}
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
-		//std::cout << "ENDOFROUND " << getRound() << std::endl;
+		std::cout << "ENDOFROUND " << getRound() << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 
-		//not working for some reason
-		if(crashRound != -1 && getRound() == crashRound - 1){
-			std::cout << "CRASHING " << id() << std::endl;
-			crash(); //crash the process this round
-		}
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 
 	}
@@ -61,10 +64,11 @@ namespace quantas {
 		for(int i = 0; i < crashCount; ++i){ 						//toCrash is parameters[0]
 			int index = rand() % peers.size(); 						//select a peer to crash
 
-			while (peersToCrash.find(index) != peersToCrash.end()) {//if it's a unique index
-				index = rand() % peers.size();
+			//if it's a unique index
+			while (find(peersToCrash.begin(), peersToCrash.begin() + i, index) != peersToCrash.begin() + i) {
+				index = rand() %  peers.size();
 			}
-			peersToCrash[i] = index;								//now add it to the list
+			peersToCrash[i] = index;									//now add it to the list
  			int roundToCrash = rand() % int(parameters["totalRounds"]); 	//when to crash
 			peers[index]->crashRound = roundToCrash; 				//tell process when to crash
 			std::cout << "Peer " << index << " to crash in " << peers[index]->crashRound << std::endl;
@@ -72,6 +76,7 @@ namespace quantas {
 		}
 
 		for(int i = 0; i < peers.size(); ++i){
+
 			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
 			peers[i]->localList.resize(peers.size()); 
@@ -83,11 +88,18 @@ namespace quantas {
 			//set proposal values and update deltap's
 			peers[i]->proposal = rand() % 2; // 0 or 1
 			peers[i]->deltap[peers[i]->id()] = peers[i]->proposal;
+
+			for(int j = 0; j < peers.size(); ++j){
+				//update its tolerance
+				peers[i]->PFD.updateTolerance(j, parameters["tolerance"]);
+				//update processList for all PFDs
+				peers[i]->PFD.processList.insert(std::make_pair(j, std::make_pair(0, false)));
+			}
 		}
 
 	}
 
-	//NEED TO EDIT
+
 	void UFDPeer::checkInStrm() {
 		while (!inStreamEmpty()) {
 			Packet<UFDPeerMessage> newMsg = popInStream();
@@ -126,7 +138,7 @@ namespace quantas {
 			else if (newMsg.getMessage().messageType == "consensus2"){
 				if(id() == 0)
 					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2"].push_back(newMsg.getMessage().deltap);
-				//std::cout << "checkInStrm and phase 2" << std::endl;
+				//std::cout << id () << " checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 			}
 				
@@ -143,7 +155,6 @@ namespace quantas {
 	int UFDPeer::decide(){
 		//given the values that we have in Vp now, we select the first non default value
 		//as per Chandra's algorithm (page 16 of UFD Paper)
-		//std::cout << "deciding..." << std::endl;
 		int value = -1;
 	
 		for(int i = 0; i < localList.size(); ++i){
@@ -175,7 +186,7 @@ namespace quantas {
 			allMessages.push_back(stuff);
 			
 			++phase;
-			std::cout << "checkContents phase 0 done" << std::endl;
+			//std::cout << "checkContents phase 0 done" << std::endl;
 		}
 		
 		//phase 1: send message with roundNum, deltaP, ID 
@@ -239,17 +250,19 @@ namespace quantas {
 
 						//send to self
 						lastMessages.push_back(msg);
+						//std::cout << id() << " sending Vp to self and phase 2" << std::endl;
 					}
 				}
+				std::cout << "checkContents Phase 1 done" << std::endl;	
 			}
-
-			std::cout << "checkContents Phase 1 done" << std::endl;		
+			
 		}
 		
-		//phase 2: send Vp to all processes
+		//phase 2 (second half)
 		if(phase == 2){			
 			//query the failure detector
 			if(PFD.checkReceived(lastMessages)){
+				std::cout << "checkReceived lastMessages" << std::endl;
 				//look for default values and set localList to match them
 				for(int i = 0; i < lastMessages.size(); ++i){
 					for(int j = 0; j < deltap.size(); ++j){
@@ -259,8 +272,9 @@ namespace quantas {
 					}
 				}
 				++phase;
+				std::cout << "checkContents Phase 2 done" << std::endl;	
 			}
-			std::cout << "checkContents Phase 2 done" << std::endl;	
+			else std::cout << "Phase 2 checkReceived failed" << std::endl;
 		}
 		
 		if (phase == 3){
