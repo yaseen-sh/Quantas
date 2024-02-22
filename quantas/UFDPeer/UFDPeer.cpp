@@ -240,17 +240,7 @@ namespace quantas {
 
 					else {
 						++phase;
-						//set up message to send Vp (phase 2)
-						UFDPeerMessage msg;
-						msg.messageType = "consensus2";
-						msg.peerID = id();
-						msg.deltap = localList;
-						//send the message
-						broadcast(msg);
 
-						//send to self
-						lastMessages.push_back(msg);
-						//std::cout << id() << " sending Vp to self and phase 2" << std::endl;
 					}
 				}
 				std::cout << "checkContents Phase 1 done" << std::endl;	
@@ -260,6 +250,19 @@ namespace quantas {
 		
 		//phase 2 (second half)
 		if(phase == 2){			
+
+			//set up message to send Vp (phase 2)
+			UFDPeerMessage msg;
+			msg.messageType = "consensus2";
+			msg.peerID = id();
+			msg.deltap = localList;
+			//send the message
+			broadcast(msg);
+
+			//send to self
+			lastMessages.push_back(msg);
+			//std::cout << id() << " sending Vp to self and phase 2" << std::endl;
+
 			//query the failure detector
 			if(PFD.checkReceived(lastMessages)){
 				std::cout << "checkReceived lastMessages" << std::endl;
