@@ -107,21 +107,21 @@ namespace quantas {
 			//handle receiving a heartbeat
 			if(newMsg.getMessage().messageType == "heartbeat"){
 				//std::cout << "checkInStrm heartbeat" << std::endl;
-				if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().messageType);
+				//if(id() == 0)
+					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				receiveHeartbeat(newMsg.getMessage());
 			}
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
 				std::cout << "checkInStrm suspect" << std::endl;
-				if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().messageType);
+				if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
 			//else if its a consensus related message
 			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
-				if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages"].push_back(newMsg.getMessage().deltap);
+				//if(id() == 0)
+					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
 
 				if(allMessages.size() <= iteration){
 					//std::cout << "checkInStrm newRound" << std::endl;
@@ -136,8 +136,8 @@ namespace quantas {
 			}
 			//if its phase 2
 			else if (newMsg.getMessage().messageType == "consensus2"){
-				if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2"].push_back(newMsg.getMessage().deltap);
+				//if(id() == 0)
+					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2 from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration) + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
 				//std::cout << id () << " checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 			}
@@ -240,10 +240,9 @@ namespace quantas {
 
 					else {
 						++phase;
-
 					}
+					std::cout << "checkContents Phase 1 done" << std::endl;	
 				}
-				std::cout << "checkContents Phase 1 done" << std::endl;	
 			}
 			
 		}
@@ -284,7 +283,7 @@ namespace quantas {
 			decision = decide();
 			++phase;
 			std::cout << "Peer " << id() << " checkContents Phase 3 done, decided on " << decision << " in round " << getRound() << std::endl;
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Decides"].push_back(decision);
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
 		}
 		
 	}

@@ -6,7 +6,7 @@
         "threadCount": 1,
         "parameters" : {
           "toCrash": 0,
-          "totalRounds": 20,
+          "totalRounds": 10,
           "tolerance": 10
         },
         "distribution": {
@@ -15,11 +15,32 @@
         },
         "topology": {
           "type": "complete",
-          "initialPeers": 5,
-          "totalPeers": 5
+          "initialPeers": 3,
+          "totalPeers": 3
         },
         "tests": 1,
-        "rounds": 60
+        "rounds": 15
+      },
+      {
+        "algorithm": "UFDPeer",
+        "logFile": "PFDdelay2.txt",
+        "threadCount": 1,
+        "parameters" : {
+          "toCrash": 0,
+          "totalRounds": 10,
+          "tolerance": 10
+        },
+        "distribution": {
+          "type": "uniform",
+          "maxDelay": 2
+        },
+        "topology": {
+          "type": "complete",
+          "initialPeers": 3,
+          "totalPeers": 3
+        },
+        "tests": 1,
+        "rounds": 15
       }
     ]
   }
