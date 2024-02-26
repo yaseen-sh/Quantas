@@ -95,6 +95,16 @@ namespace quantas{
             return true;
 
         }
+
+        void                    printProcessList(){
+            std::cout << "================================================================" << std::endl;
+            std::cout << "ProcessList contents: " <<  std::endl;
+            for (const auto & p : processList){
+                std::cout << "ID: " << p.first << " " << " Last heard in round " << p.second.first;
+                if(p.second.second) std::cout << " SUSPECT" << std::endl;
+                else std::cout << " NONSUSPECT" << std::endl;
+            }
+        }
     //private:
         // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
         std::map<int, std::pair<int, bool>>   processList;

@@ -19,8 +19,9 @@ namespace quantas {
 	}
 
 	void UFDPeer::performComputation() {
-		//std::cout << "PERFORMCOMPUTATION()" << std::endl;
-
+		//std::cout << "PERFORMCOMPUTATION()" << std::endl
+		//std::cout << "Peer " << id() << " ";
+		//PFD.printProcessList(); 
 				
 		if(getRound() == crashRound){
 			std::cout << "CRASHING " << id() << std::endl;
@@ -117,7 +118,7 @@ namespace quantas {
 				if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
-			//else if its a consensus related message
+			//else if its a consensus related message in phase 1
 			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
 				//if(id() == 0)
@@ -133,13 +134,15 @@ namespace quantas {
 					//std::cout << "checkInStrm newMessage" << std::endl;
 					allMessages[iteration].push_back(newMsg.getMessage());
 				}
+				receiveHeartbeat(newMsg.getMessage()); //regular messages should still serve the effect of a heartbeat
 			}
-			//if its phase 2
+			//if its a phase 2 message
 			else if (newMsg.getMessage().messageType == "consensus2"){
 				//if(id() == 0)
 					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2 from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration) + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
 				//std::cout << id () << " checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
+				receiveHeartbeat(newMsg.getMessage()); //regular messages should still serve the effect of a heartbeat
 			}
 				
 		}
@@ -148,6 +151,7 @@ namespace quantas {
 	void UFDPeer::sendHeartbeat(){
 		UFDPeerMessage msg;
 		msg.messageType = "heartbeat";
+		msg.roundNumber = getRound(); //iteration;
 		msg.peerID = id();
 		broadcast(msg);
 	}
@@ -175,7 +179,7 @@ namespace quantas {
 			UFDPeerMessage msg;
 			msg.messageType = "consensus";
 			msg.peerID = id();
-			msg.roundNumber = iteration;
+			msg.roundNumber = getRound(); //iteration;
 			msg.deltap = deltap;
 			//send the message
 			broadcast(msg);
@@ -218,12 +222,13 @@ namespace quantas {
 
 
 					//starting next iteration
-					if(iteration < deltap.size() -1){
+					if(iteration < deltap.size() - 1){
 						//set up the message to send deltaP
 						UFDPeerMessage msg;
 						msg.messageType = "consensus";
 						msg.peerID = id();
-						msg.roundNumber = ++iteration;
+						msg.roundNumber = getRound();
+						++iteration;
 						msg.deltap = deltap;
 						//send the message
 						broadcast(msg);
@@ -253,6 +258,8 @@ namespace quantas {
 			//set up message to send Vp (phase 2)
 			UFDPeerMessage msg;
 			msg.messageType = "consensus2";
+			msg.roundNumber = getRound();
+			++iteration;
 			msg.peerID = id();
 			msg.deltap = localList;
 			//send the message
@@ -260,8 +267,7 @@ namespace quantas {
 
 			//send to self
 			lastMessages.push_back(msg);
-			//std::cout << id() << " sending Vp to self and phase 2" << std::endl;
-
+			
 			//query the failure detector
 			if(PFD.checkReceived(lastMessages)){
 				std::cout << "checkReceived lastMessages" << std::endl;
