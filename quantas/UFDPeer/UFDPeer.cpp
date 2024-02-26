@@ -20,7 +20,7 @@ namespace quantas {
 
 	void UFDPeer::performComputation() {
 		//std::cout << "PERFORMCOMPUTATION()" << std::endl
-		//std::cout << "Peer " << id() << " ";
+		std::cout << "Peer " << id() << " " << "perform computation" << std::endl;
 		//PFD.printProcessList(); 
 				
 		if(getRound() == crashRound){
@@ -46,7 +46,7 @@ namespace quantas {
 	}
 
 	void UFDPeer::endOfRound(const vector<Peer<UFDPeerMessage>*>& _peers) {
-		std::cout << "ENDOFROUND " << getRound() << std::endl;
+		std::cout << "END OF ROUND " << getRound() << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
@@ -111,6 +111,7 @@ namespace quantas {
 				//if(id() == 0)
 					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				receiveHeartbeat(newMsg.getMessage());
+				std::cout << "heartbeat from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
 			}
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
@@ -122,18 +123,16 @@ namespace quantas {
 			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
 				//if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
-
-				if(allMessages.size() <= iteration){
+					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(newMsg.getMessage().iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
+				std::cout << "consensus message from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
+			
+				while(allMessages.size() <= newMsg.getMessage().iteration){
 					//std::cout << "checkInStrm newRound" << std::endl;
 					vector<UFDPeerMessage> stuff;
-					stuff.push_back(newMsg.getMessage());
 					allMessages.push_back(stuff);
 				}
-				else{
-					//std::cout << "checkInStrm newMessage" << std::endl;
-					allMessages[iteration].push_back(newMsg.getMessage());
-				}
+				//std::cout << "checkInStrm newMessage" << std::endl;
+				allMessages[newMsg.getMessage().iteration].push_back(newMsg.getMessage());
 				receiveHeartbeat(newMsg.getMessage()); //regular messages should still serve the effect of a heartbeat
 			}
 			//if its a phase 2 message
@@ -179,6 +178,7 @@ namespace quantas {
 			UFDPeerMessage msg;
 			msg.messageType = "consensus";
 			msg.peerID = id();
+			msg.iteration = iteration;
 			msg.roundNumber = getRound(); //iteration;
 			msg.deltap = deltap;
 			//send the message
@@ -228,7 +228,7 @@ namespace quantas {
 						msg.messageType = "consensus";
 						msg.peerID = id();
 						msg.roundNumber = getRound();
-						++iteration;
+						msg.iteration = ++iteration;
 						msg.deltap = deltap;
 						//send the message
 						broadcast(msg);

@@ -16,6 +16,7 @@ namespace quantas{
         // int                 roundSubmitted;
 
         int                     roundNumber = -1;
+        int                     iteration = -1;
         int                     peerID = -1;
         vector<int>             deltap; // new values recieved in last round
         string messageType = ""; //heartbeat or consensus

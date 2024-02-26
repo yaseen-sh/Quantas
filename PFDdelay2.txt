@@ -1,19 +1,31 @@
 {
-    "RunTime": 0.003812816,
+    "RunTime": 0.003581435,
     "tests": [
         [
             null,
-            null,
             [
                 {
-                    "Message from 1, iteration 0, round 2": [
+                    "Message from 1, iteration 0, round 1": [
                         [
                             -1,
                             1,
                             -1
                         ],
                         "heartbeat"
-                    ],
+                    ]
+                },
+                {
+                    "Message from 2, iteration 0, round 1": [
+                        [
+                            -1,
+                            -1,
+                            1
+                        ]
+                    ]
+                }
+            ],
+            [
+                {
                     "Message from 2, iteration 0, round 2": [
                         [
                             -1,
@@ -33,11 +45,6 @@
                         "heartbeat"
                     ],
                     "Message from 2, iteration 0, round 2": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ],
                         "heartbeat"
                     ]
                 },
@@ -61,6 +68,22 @@
                 }
             ],
             [
+                {
+                    "Message from 1, iteration 1, round 3": [
+                        [
+                            1,
+                            1,
+                            1
+                        ]
+                    ],
+                    "Message from 2, iteration 1, round 3": [
+                        [
+                            1,
+                            1,
+                            1
+                        ]
+                    ]
+                },
                 {
                     "Message from 2, iteration 1, round 3": [
                         [
@@ -70,9 +93,8 @@
                         ]
                     ]
                 },
-                null,
                 {
-                    "Message from 1, iteration 1, round 3": [
+                    "Message from 0, iteration 1, round 3": [
                         [
                             1,
                             1,
@@ -82,7 +104,24 @@
                 }
             ],
             [
+                null,
                 {
+                    "Message from 0, iteration 1, round 4": [
+                        [
+                            1,
+                            1,
+                            1
+                        ]
+                    ]
+                },
+                {
+                    "Message from 0, iteration 2, round 4": [
+                        [
+                            1,
+                            -1,
+                            -1
+                        ]
+                    ],
                     "Message from 1, iteration 1, round 4": [
                         [
                             1,
@@ -90,36 +129,18 @@
                             1
                         ]
                     ]
-                },
-                {
-                    "Message from 0, iteration 1, round 4": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Message from 2, iteration 1, round 4": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 0, iteration 1, round 4": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
                 }
             ],
             [
-                null,
-                null,
+                {
+                    "Message from 2, iteration 2, round 5": [
+                        [
+                            -1,
+                            -1,
+                            1
+                        ]
+                    ]
+                },
                 {
                     "Message from 0, iteration 2, round 5": [
                         [
@@ -138,23 +159,9 @@
                             1,
                             -1
                         ]
-                    ],
-                    "Message from 2, iteration 2, round 6": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ]
                     ]
                 },
                 {
-                    "Message from 0, iteration 2, round 6": [
-                        [
-                            1,
-                            -1,
-                            -1
-                        ]
-                    ],
                     "Message from 2, iteration 2, round 6": [
                         [
                             -1,
@@ -175,28 +182,19 @@
             ],
             [
                 {
+                    "Messages2 from 1, iteration 3, round 7": [
+                        [
+                            1,
+                            1,
+                            1
+                        ]
+                    ]
+                },
+                {
                     "Message from 2, iteration 3, round 7": [
                         "heartbeat"
                     ],
                     "Messages2 from 2, iteration 3, round 7": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 2, iteration 3, round 7": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 1, iteration 3, round 7": [
                         [
                             1,
                             1,
@@ -210,12 +208,17 @@
                     "Message from 1, iteration 4, round 8": [
                         "heartbeat"
                     ],
+                    "Message from 2, iteration 4, round 8": [
+                        "heartbeat"
+                    ],
                     "Messages2 from 1, iteration 4, round 8": [
                         [
                             1,
                             1,
                             1
-                        ],
+                        ]
+                    ],
+                    "Messages2 from 2, iteration 4, round 8": [
                         [
                             1,
                             1,
@@ -230,17 +233,7 @@
                     "Message from 0, iteration 4, round 8": [
                         "heartbeat"
                     ],
-                    "Message from 2, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
                     "Messages2 from 0, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Messages2 from 2, iteration 4, round 8": [
                         [
                             1,
                             1,
@@ -263,9 +256,19 @@
                             1,
                             1,
                             1
+                        ],
+                        [
+                            1,
+                            1,
+                            1
                         ]
                     ],
                     "Messages2 from 1, iteration 4, round 8": [
+                        [
+                            1,
+                            1,
+                            1
+                        ],
                         [
                             1,
                             1,
@@ -305,16 +308,16 @@
                             1,
                             1,
                             1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 0, iteration 5, round 9": [
+                        ],
                         [
                             1,
                             1,
                             1
-                        ],
+                        ]
+                    ]
+                },
+                {
+                    "Messages2 from 1, iteration 5, round 9": [
                         [
                             1,
                             1,
@@ -343,7 +346,7 @@
                     ]
                 },
                 {
-                    "Messages2 from 1, iteration 5, round 10": [
+                    "Messages2 from 0, iteration 5, round 10": [
                         [
                             1,
                             1,
@@ -356,7 +359,12 @@
             null,
             [
                 {
-                    "Message from 1, iteration 5, round 13": [
+                    "Message from 2, iteration 5, round 13": [
+                        "heartbeat"
+                    ]
+                },
+                {
+                    "Message from 2, iteration 5, round 13": [
                         "heartbeat"
                     ]
                 },
@@ -364,11 +372,6 @@
                     "Message from 0, iteration 5, round 13": [
                         "heartbeat"
                     ],
-                    "Message from 2, iteration 5, round 13": [
-                        "heartbeat"
-                    ]
-                },
-                {
                     "Message from 1, iteration 5, round 13": [
                         "heartbeat"
                     ]
@@ -376,11 +379,10 @@
             ],
             [
                 {
-                    "Message from 2, iteration 5, round 14": [
+                    "Message from 1, iteration 5, round 14": [
                         "heartbeat"
                     ]
                 },
-                null,
                 {
                     "Message from 0, iteration 5, round 14": [
                         "heartbeat"
