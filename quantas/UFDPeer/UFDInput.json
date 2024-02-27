@@ -26,8 +26,8 @@
         "logFile": "PFDdelay2.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 0,
-          "totalRounds": 10,
+          "toCrash": 3,
+          "totalRounds": 30,
           "tolerance": 10
         },
         "distribution": {
@@ -36,11 +36,32 @@
         },
         "topology": {
           "type": "complete",
-          "initialPeers": 3,
-          "totalPeers": 3
+          "initialPeers": 10,
+          "totalPeers": 10
         },
         "tests": 1,
-        "rounds": 15
+        "rounds": 30
+      },
+      {
+        "algorithm": "UFDPeer",
+        "logFile": "PFDdelay3.txt",
+        "threadCount": 1,
+        "parameters" : {
+          "toCrash": 9,
+          "totalRounds": 200,
+          "tolerance": 10
+        },
+        "distribution": {
+          "type": "uniform",
+          "maxDelay": 4
+        },
+        "topology": {
+          "type": "complete",
+          "initialPeers": 30,
+          "totalPeers": 30
+        },
+        "tests": 1,
+        "rounds": 200
       }
     ]
   }

@@ -1,394 +1,69 @@
 {
-    "RunTime": 0.003581435,
+    "RunTime": 0.028673253,
     "tests": [
         [
             null,
-            [
-                {
-                    "Message from 1, iteration 0, round 1": [
-                        [
-                            -1,
-                            1,
-                            -1
-                        ],
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 2, iteration 0, round 1": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 2, iteration 0, round 2": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ],
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 0, iteration 0, round 2": [
-                        [
-                            1,
-                            -1,
-                            -1
-                        ],
-                        "heartbeat"
-                    ],
-                    "Message from 2, iteration 0, round 2": [
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 0, iteration 0, round 2": [
-                        [
-                            1,
-                            -1,
-                            -1
-                        ],
-                        "heartbeat"
-                    ],
-                    "Message from 1, iteration 0, round 2": [
-                        [
-                            -1,
-                            1,
-                            -1
-                        ],
-                        "heartbeat"
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 1, iteration 1, round 3": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Message from 2, iteration 1, round 3": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 2, iteration 1, round 3": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 0, iteration 1, round 3": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                }
-            ],
-            [
-                null,
-                {
-                    "Message from 0, iteration 1, round 4": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 0, iteration 2, round 4": [
-                        [
-                            1,
-                            -1,
-                            -1
-                        ]
-                    ],
-                    "Message from 1, iteration 1, round 4": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 2, iteration 2, round 5": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 0, iteration 2, round 5": [
-                        [
-                            1,
-                            -1,
-                            -1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 1, iteration 2, round 6": [
-                        [
-                            -1,
-                            1,
-                            -1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 2, iteration 2, round 6": [
-                        [
-                            -1,
-                            -1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 1, iteration 2, round 6": [
-                        [
-                            -1,
-                            1,
-                            -1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Messages2 from 1, iteration 3, round 7": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Message from 2, iteration 3, round 7": [
-                        "heartbeat"
-                    ],
-                    "Messages2 from 2, iteration 3, round 7": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 1, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
-                    "Message from 2, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
-                    "Messages2 from 1, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Messages2 from 2, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Process 0 Decides in round 8": [
-                        1
-                    ]
-                },
-                {
-                    "Message from 0, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
-                    "Messages2 from 0, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Process 1 Decides in round 8": [
-                        1
-                    ]
-                },
-                {
-                    "Message from 0, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
-                    "Message from 1, iteration 4, round 8": [
-                        "heartbeat"
-                    ],
-                    "Messages2 from 0, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ],
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Messages2 from 1, iteration 4, round 8": [
-                        [
-                            1,
-                            1,
-                            1
-                        ],
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Process 2 Decides in round 8": [
-                        1
-                    ]
-                }
-            ],
-            [
-                {
-                    "Messages2 from 2, iteration 5, round 9": [
-                        [
-                            1,
-                            1,
-                            1
-                        ],
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 0, iteration 5, round 9": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ],
-                    "Messages2 from 2, iteration 5, round 9": [
-                        [
-                            1,
-                            1,
-                            1
-                        ],
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 1, iteration 5, round 9": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                }
-            ],
-            [
-                {
-                    "Messages2 from 1, iteration 5, round 10": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 0, iteration 5, round 10": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "Messages2 from 0, iteration 5, round 10": [
-                        [
-                            1,
-                            1,
-                            1
-                        ]
-                    ]
-                }
-            ],
+            {
+                "Process 9 Crashes in round 1": [
+                    "suspected by all"
+                ]
+            },
             null,
             null,
-            [
-                {
-                    "Message from 2, iteration 5, round 13": [
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 2, iteration 5, round 13": [
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 0, iteration 5, round 13": [
-                        "heartbeat"
-                    ],
-                    "Message from 1, iteration 5, round 13": [
-                        "heartbeat"
-                    ]
-                }
-            ],
-            [
-                {
-                    "Message from 1, iteration 5, round 14": [
-                        "heartbeat"
-                    ]
-                },
-                {
-                    "Message from 0, iteration 5, round 14": [
-                        "heartbeat"
-                    ]
-                }
-            ]
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+                "Process 6 Crashes in round 12": [
+                    "suspected by all"
+                ]
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+                "Process 1 Decides in round 21": [
+                    0
+                ],
+                "Process 5 Decides in round 21": [
+                    0
+                ]
+            },
+            {
+                "Process 0 Decides in round 22": [
+                    0
+                ],
+                "Process 2 Decides in round 22": [
+                    0
+                ],
+                "Process 3 Decides in round 22": [
+                    0
+                ],
+                "Process 4 Decides in round 22": [
+                    0
+                ],
+                "Process 7 Decides in round 22": [
+                    0
+                ],
+                "Process 8 Decides in round 22": [
+                    0
+                ]
+            },
+            {
+                "Process 5 Crashes in round 23": [
+                    "suspected by all"
+                ]
+            }
         ]
     ]
 }

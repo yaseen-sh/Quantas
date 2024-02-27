@@ -26,6 +26,7 @@ namespace quantas {
 		if(getRound() == crashRound){
 			std::cout << "CRASHING " << id() << std::endl;
 			crash(); //crash the process this round
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Crashes in round " + std::to_string(getRound())].push_back("suspected by all");
 			return;
 		}
 
@@ -109,21 +110,21 @@ namespace quantas {
 			if(newMsg.getMessage().messageType == "heartbeat"){
 				//std::cout << "checkInStrm heartbeat" << std::endl;
 				//if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
+					//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				receiveHeartbeat(newMsg.getMessage());
 				std::cout << "heartbeat from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
 			}
 			//we use magic to tell every process to suspect a process when it crashes
 			else if (newMsg.getMessage().messageType == "suspect"){
 				std::cout << "checkInStrm suspect" << std::endl;
-				if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
+				//if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				PFD.suspectProcess(newMsg.getMessage().peerID);
 			}
 			//else if its a consensus related message in phase 1
 			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
 				//if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(newMsg.getMessage().iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
+					//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(newMsg.getMessage().iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
 				std::cout << "consensus message from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
 			
 				while(allMessages.size() <= newMsg.getMessage().iteration){
@@ -138,7 +139,7 @@ namespace quantas {
 			//if its a phase 2 message
 			else if (newMsg.getMessage().messageType == "consensus2"){
 				//if(id() == 0)
-					LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2 from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration) + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
+					//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Messages2 from " + std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration) + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().deltap);
 				//std::cout << id () << " checkInStrm and phase 2" << std::endl;
 				lastMessages.push_back(newMsg.getMessage());
 				receiveHeartbeat(newMsg.getMessage()); //regular messages should still serve the effect of a heartbeat
@@ -288,8 +289,9 @@ namespace quantas {
 		if (phase == 3){
 			decision = decide();
 			++phase;
-			std::cout << "Peer " << id() << " checkContents Phase 3 done, decided on " << decision << " in round " << getRound() << std::endl;
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
+			std::cout << "Peer " << id() << " Phase 3 done, decided on " << decision << " in round " << getRound() << std::endl;
+
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
 		}
 		
 	}
