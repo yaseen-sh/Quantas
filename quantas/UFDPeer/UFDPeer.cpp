@@ -26,7 +26,8 @@ namespace quantas {
 		if(getRound() == crashRound){
 			std::cout << "CRASHING " << id() << std::endl;
 			crash(); //crash the process this round
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Crashes in round " + std::to_string(getRound())].push_back("suspected by all");
+			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Crashes in round " + std::to_string(getRound())].push_back("suspected by all");
+
 			return;
 		}
 
@@ -254,7 +255,7 @@ namespace quantas {
 		}
 		
 		//phase 2 (second half)
-		if(phase == 2){			
+		else if(phase == 2){			
 
 			//set up message to send Vp (phase 2)
 			UFDPeerMessage msg;
@@ -286,12 +287,19 @@ namespace quantas {
 			else std::cout << "Phase 2 checkReceived failed" << std::endl;
 		}
 		
-		if (phase == 3){
+		else if (phase == 3){
 			decision = decide();
 			++phase;
 			std::cout << "Peer " << id() << " Phase 3 done, decided on " << decision << " in round " << getRound() << std::endl;
 
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
+			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(1);
+
+		}
+
+		else {
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(0);
+
 		}
 		
 	}

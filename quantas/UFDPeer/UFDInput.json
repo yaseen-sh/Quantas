@@ -6,62 +6,20 @@
         "threadCount": 1,
         "parameters" : {
           "toCrash": 0,
-          "totalRounds": 10,
-          "tolerance": 10
+          "totalRounds": 15,
+          "tolerance": 3
         },
         "distribution": {
           "type": "uniform",
-          "maxDelay": 2
+          "maxDelay": 3
         },
         "topology": {
           "type": "complete",
-          "initialPeers": 3,
-          "totalPeers": 3
+          "initialPeers": 100,
+          "totalPeers": 100
         },
-        "tests": 1,
-        "rounds": 15
-      },
-      {
-        "algorithm": "UFDPeer",
-        "logFile": "PFDdelay2.txt",
-        "threadCount": 1,
-        "parameters" : {
-          "toCrash": 3,
-          "totalRounds": 30,
-          "tolerance": 10
-        },
-        "distribution": {
-          "type": "uniform",
-          "maxDelay": 2
-        },
-        "topology": {
-          "type": "complete",
-          "initialPeers": 10,
-          "totalPeers": 10
-        },
-        "tests": 1,
-        "rounds": 30
-      },
-      {
-        "algorithm": "UFDPeer",
-        "logFile": "PFDdelay3.txt",
-        "threadCount": 1,
-        "parameters" : {
-          "toCrash": 9,
-          "totalRounds": 200,
-          "tolerance": 10
-        },
-        "distribution": {
-          "type": "uniform",
-          "maxDelay": 4
-        },
-        "topology": {
-          "type": "complete",
-          "initialPeers": 30,
-          "totalPeers": 30
-        },
-        "tests": 1,
-        "rounds": 200
+        "tests": 10,
+        "rounds": 1001
       }
     ]
   }
