@@ -51,6 +51,15 @@ namespace quantas {
 		std::cout << "END OF ROUND " << getRound() << std::endl;
 		const vector<UFDPeer*> peers = reinterpret_cast<vector<UFDPeer*> const&>(_peers);
 
+		//check if all noncrashed processes have decided.
+		int decideCount = 0;
+		for(const auto& p : peers){
+			if (p->decision != -1 || p->crashed) ++decideCount;
+		}
+		//don't print over and over if we're already decided
+		if(decideCount == peers.size() && LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].size() < 1)
+			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(getRound());
+
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
 
 	}
@@ -293,12 +302,12 @@ namespace quantas {
 			std::cout << "Peer " << id() << " Phase 3 done, decided on " << decision << " in round " << getRound() << std::endl;
 
 			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()]["Process " + std::to_string(id()) + " Decides in round " + std::to_string(getRound())].push_back(decision);
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(1);
+			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(1);
 
 		}
 
 		else {
-			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(0);
+			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(0);
 
 		}
 		

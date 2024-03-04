@@ -6,12 +6,12 @@
         "threadCount": 1,
         "parameters" : {
           "toCrash": 0,
-          "totalRounds": 15,
+          "totalRounds": 100,
           "tolerance": 3
         },
         "distribution": {
           "type": "uniform",
-          "maxDelay": 3
+          "maxDelay": 10
         },
         "topology": {
           "type": "complete",
@@ -19,7 +19,7 @@
           "totalPeers": 100
         },
         "tests": 10,
-        "rounds": 1001
+        "rounds": 1200
       }
     ]
   }
