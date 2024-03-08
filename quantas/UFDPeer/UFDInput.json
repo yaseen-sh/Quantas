@@ -5,9 +5,54 @@
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 0,
+          "toCrash": 50,
           "totalRounds": 100,
-          "tolerance": 3
+          "maxDelay": 1,
+          "heartbeatPeriod" : 5
+        },
+        "distribution": {
+          "type": "uniform",
+          "maxDelay": 1
+        },
+        "topology": {
+          "type": "complete",
+          "initialPeers": 100,
+          "totalPeers": 100
+        },
+        "tests": 10,
+        "rounds": 1200
+      },
+      {
+        "algorithm": "UFDPeer",
+        "logFile": "PFDdelay2.txt",
+        "threadCount": 1,
+        "parameters" : {
+          "toCrash": 50,
+          "totalRounds": 100,
+          "maxDelay": 5,
+          "heartbeatPeriod" : 5
+        },
+        "distribution": {
+          "type": "uniform",
+          "maxDelay": 5
+        },
+        "topology": {
+          "type": "complete",
+          "initialPeers": 100,
+          "totalPeers": 100
+        },
+        "tests": 10,
+        "rounds": 1200
+      },
+      {
+        "algorithm": "UFDPeer",
+        "logFile": "PFDdelay3.txt",
+        "threadCount": 1,
+        "parameters" : {
+          "toCrash": 50,
+          "totalRounds": 100,
+          "maxDelay": 10,
+          "heartbeatPeriod" : 5
         },
         "distribution": {
           "type": "uniform",
@@ -20,6 +65,29 @@
         },
         "tests": 10,
         "rounds": 1200
+      },
+      {
+        "algorithm": "UFDPeer",
+        "logFile": "PFDdelay4.txt",
+        "threadCount": 1,
+        "parameters" : {
+          "toCrash": 50,
+          "totalRounds": 100,
+          "maxDelay": 15,
+          "heartbeatPeriod" : 5
+        },
+        "distribution": {
+          "type": "uniform",
+          "maxDelay": 15
+        },
+        "topology": {
+          "type": "complete",
+          "initialPeers": 100,
+          "totalPeers": 100
+        },
+        "tests": 10,
+        "rounds": 1800
       }
+
     ]
   }

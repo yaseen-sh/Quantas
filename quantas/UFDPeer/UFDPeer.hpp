@@ -107,7 +107,7 @@ namespace quantas{
             }
         }
     //private:
-        // maintain a list of processes, last round we receive heartbeat, suspected (T) or not (F)
+        // maintain a list of process IDs, last round we receive heartbeat, suspected (T) or not (F)
         std::map<int, std::pair<int, bool>>   processList;
         // how many rounds before we suspect a process?
         int                      timeTolerance;
@@ -155,6 +155,8 @@ namespace quantas{
         //= phase 1 keep track var
         int                                 iteration = 0;
 
+        //= after how many rounds do we send a heartbeat?
+        int                                 heartbeatPeriod = 0;
 
 
         //= different from regular messages, we need to send a heartbeat
@@ -167,12 +169,19 @@ namespace quantas{
 
         //= function to make the process crash (not working)
         void                    crash(){
+            //THIS PART IS 'MAGIC' and we want to change it
             //create a special suspect message to others and broadcast
-            UFDPeerMessage msg;
-            msg.peerID = id();
-            msg.messageType = "suspect";
-            broadcast(msg);
+            // UFDPeerMessage msg;
+            // msg.peerID = id();
+            // msg.messageType = "suspect";
+            // broadcast(msg);
+
+
+
+            //debugging
             std::cout << "Crashed " << id() << std::endl;
+
+            //the actual crash
             crashed = true;
             PFD.suspectProcess(id()); //suspect itself
         }

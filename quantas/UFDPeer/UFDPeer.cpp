@@ -40,7 +40,9 @@ namespace quantas {
 
 			checkContents();
 
-			if(getRound() % 6 == 0) //6 is arbitrary, but we don't want to send a heartbeat every round. make it smarter later.
+			//6 is arbitrary, but we don't want to send a heartbeat every round. make it smarter later.
+			//Later is now - we're updating the code to take heartbeatperiod from the input file and configure tolerance accordingly.
+			if(getRound() % heartbeatPeriod == 0) 
 				sendHeartbeat();
 		}
 	
@@ -70,8 +72,13 @@ namespace quantas {
 		
 		//set up for crashing processes
 		int crashCount = parameters["toCrash"];
-		std::cout << crashCount << " peers to crash" <<  std::endl;
+		//std::cout << crashCount << " peers to crash" <<  std::endl;
 
+		// there is a relationship between delay and tolerance, need to set up
+		int HBP = parameters["heartbeatPeriod"];
+		int tolerance = int(parameters["maxDelay"]) + int(parameters["heartbeatPeriod"]);
+
+		//set up crashing
 		vector<int> peersToCrash; peersToCrash.resize(crashCount);
 		for(int i = 0; i < crashCount; ++i){ 						//toCrash is parameters[0]
 			int index = rand() % peers.size(); 						//select a peer to crash
@@ -89,6 +96,10 @@ namespace quantas {
 
 		for(int i = 0; i < peers.size(); ++i){
 
+			//define tolerance and heartbeatperiods
+			peers[i]->PFD.timeTolerance = tolerance;
+			peers[i]->heartbeatPeriod = HBP;
+
 			//resize the vectors
 			peers[i]->deltap.resize(peers.size());
 			peers[i]->localList.resize(peers.size()); 
@@ -102,8 +113,8 @@ namespace quantas {
 			peers[i]->deltap[peers[i]->id()] = peers[i]->proposal;
 
 			for(int j = 0; j < peers.size(); ++j){
-				//update its tolerance
-				peers[i]->PFD.updateTolerance(j, parameters["tolerance"]);
+				// //update its tolerance
+				// peers[i]->PFD.updateTolerance(j, parameters["tolerance"]);
 				//update processList for all PFDs
 				peers[i]->PFD.processList.insert(std::make_pair(j, std::make_pair(0, false)));
 			}
@@ -124,12 +135,13 @@ namespace quantas {
 				receiveHeartbeat(newMsg.getMessage());
 				std::cout << "heartbeat from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
 			}
+
 			//we use magic to tell every process to suspect a process when it crashes
-			else if (newMsg.getMessage().messageType == "suspect"){
-				std::cout << "checkInStrm suspect" << std::endl;
-				//if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
-				PFD.suspectProcess(newMsg.getMessage().peerID);
-			}
+			// else if (newMsg.getMessage().messageType == "suspect"){
+			// 	std::cout << "checkInStrm suspect" << std::endl;
+			// 	//if(id() == 0) LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration),  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
+			// 	PFD.suspectProcess(newMsg.getMessage().peerID);
+			// }
 			//else if its a consensus related message in phase 1
 			else if (newMsg.getMessage().messageType == "consensus") {
 				//if we need to push_back
@@ -155,6 +167,13 @@ namespace quantas {
 				receiveHeartbeat(newMsg.getMessage()); //regular messages should still serve the effect of a heartbeat
 			}
 				
+		}
+
+		//now check if we need to suspect any processes
+		for(const auto& i : PFD.processList){
+			//if we've missed our window
+			if(getRound() - i.second.first  > PFD.timeTolerance)
+				PFD.suspectProcess(i.first);
 		}
 	}
 
