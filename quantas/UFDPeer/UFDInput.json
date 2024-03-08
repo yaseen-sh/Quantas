@@ -5,7 +5,7 @@
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 75,
           "totalRounds": 100,
           "maxDelay": 1,
           "heartbeatPeriod" : 5
@@ -27,7 +27,7 @@
         "logFile": "PFDdelay2.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 75,
           "totalRounds": 100,
           "maxDelay": 5,
           "heartbeatPeriod" : 5
@@ -49,7 +49,7 @@
         "logFile": "PFDdelay3.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 75,
           "totalRounds": 100,
           "maxDelay": 10,
           "heartbeatPeriod" : 5
@@ -71,7 +71,7 @@
         "logFile": "PFDdelay4.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 75,
           "totalRounds": 100,
           "maxDelay": 15,
           "heartbeatPeriod" : 5
