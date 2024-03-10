@@ -8,7 +8,7 @@
           "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 1,
-          "heartbeatPeriod" : 5
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -30,7 +30,7 @@
           "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 5,
-          "heartbeatPeriod" : 5
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -52,7 +52,7 @@
           "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 10,
-          "heartbeatPeriod" : 5
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -74,7 +74,7 @@
           "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 15,
-          "heartbeatPeriod" : 5
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
