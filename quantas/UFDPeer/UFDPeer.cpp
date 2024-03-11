@@ -61,7 +61,7 @@ namespace quantas {
 		//don't print over and over if we're already decided
 		if(decideCount == peers.size() && LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].size() < 1){
 			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(getRound());
-			for(const auto& i : peers){ totalMessages += i->allMessages.size(); totalMessages += i->lastMessages.size(); totalMessages += i->heartbeatsReceived}
+			for(const auto& i : peers){ totalMessages += i->allMessages.size(); totalMessages += i->lastMessages.size(); totalMessages += i->heartbeatsReceived;}
 			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(totalMessages);
 		}
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
