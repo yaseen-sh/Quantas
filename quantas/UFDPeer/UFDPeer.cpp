@@ -61,7 +61,7 @@ namespace quantas {
 		//don't print over and over if we're already decided
 		if(decideCount == peers.size() && LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].size() < 1){
 			//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(getRound());
-			for(const auto& i : peers){ totalMessages += i->allMessages.size(); totalMessages += i->lastMessages.size();}
+			for(const auto& i : peers){ totalMessages += i->allMessages.size(); totalMessages += i->lastMessages.size(); totalMessages += i->heartbeatsReceived}
 			LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()].push_back(totalMessages);
 		}
 		//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()]["latency"].push_back(latency / length);
@@ -135,6 +135,7 @@ namespace quantas {
 				//if(id() == 0)
 					//LogWriter::instance()->data["tests"][LogWriter::instance()->getTest()][getRound()][id()]["Message from " +std::to_string(newMsg.getMessage().peerID) + ", iteration " + std::to_string(iteration)  + ", round " + std::to_string(getRound())].push_back(newMsg.getMessage().messageType);
 				receiveHeartbeat(newMsg.getMessage());
+				++heartbeatsReceived; //keep track for totalMessages				
 				std::cout << "heartbeat from " + std::to_string(newMsg.getMessage().peerID) << std::endl;
 			}
 

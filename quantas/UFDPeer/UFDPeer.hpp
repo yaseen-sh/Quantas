@@ -158,6 +158,7 @@ namespace quantas{
         //= after how many rounds do we send a heartbeat?
         int                                 heartbeatPeriod = 0;
 
+        int                                 heartbeatsReceived = 0;
 
         //= different from regular messages, we need to send a heartbeat
         void                  sendHeartbeat();
