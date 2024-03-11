@@ -5,10 +5,10 @@
         "logFile": "PFDdelay1.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 1,
-          "heartbeatPeriod" : 10
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -27,10 +27,10 @@
         "logFile": "PFDdelay2.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 5,
-          "heartbeatPeriod" : 10
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -49,10 +49,10 @@
         "logFile": "PFDdelay3.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 10,
-          "heartbeatPeriod" : 10
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
@@ -71,10 +71,10 @@
         "logFile": "PFDdelay4.txt",
         "threadCount": 1,
         "parameters" : {
-          "toCrash": 50,
+          "toCrash": 0,
           "totalRounds": 100,
           "maxDelay": 15,
-          "heartbeatPeriod" : 10
+          "heartbeatPeriod" : 1
         },
         "distribution": {
           "type": "uniform",
